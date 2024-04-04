@@ -3,11 +3,12 @@ set -euo pipefail
 IFS=$'\n\t'
 
 # Init vars
-CC=clang
-CFLAGS=(-Wall -fdiagnostics-color=always)
-LDFLAGS=(-lm)
 ARCH="${ARCH-}"
 TARGET="${TARGET-}"
+ARTIFACT="${ARTIFACT-}"
+CC=clang
+CFLAGS+=(-Wall -fdiagnostics-color=always)
+LDFLAGS+=(-lm)
 
 # If the ARCH environment variable is not set then
 if [ -z "$ARCH" ]; then
@@ -15,9 +16,9 @@ if [ -z "$ARCH" ]; then
     exit 1
 fi
 
-# If the TARGET environment variable is not set then
-if [ -z "$TARGET" ]; then
-    echo "invalid TARGET value"
+# If the ARTIFACT environment variable is not set then
+if [ -z "$ARTIFACT" ] || [ "$ARTIFACT" = "examples/" ] || [ "$ARTIFACT" = "tests/" ]; then
+    echo "invalid ARTIFACT value"
     exit 1
 fi
 
@@ -29,7 +30,7 @@ else
 fi
 
 # Ensure that the build directory exists
-mkdir -p "$(pwd)/build/$(dirname "$TARGET")"
+mkdir -p "$(pwd)/build/$(dirname "$ARTIFACT")"
 
 # Compile
 if [ "$ARCH" = "arm" ]; then
@@ -42,8 +43,8 @@ if [ "$ARCH" = "arm" ]; then
         src/arch/arm/neon/*.c \
         src/arch/arm/cmsis/*.c \
         src/*.c \
-        "$(pwd)/$TARGET"/main.c \
-        -o "$(pwd)/build/$TARGET" "${LDFLAGS[@]}"
+        "$(pwd)/$ARTIFACT"/main.c \
+        -o "$(pwd)/build/$ARTIFACT" "${LDFLAGS[@]}"
 
 elif [ "$ARCH" = "generic" ]; then
     # Generic
@@ -51,7 +52,7 @@ elif [ "$ARCH" = "generic" ]; then
         "$DEFINES_FLAGS" \
         -Iinclude/ \
         src/*.c \
-        "$(pwd)/$TARGET"/main.c \
-        -o "$(pwd)/build/$TARGET" "${LDFLAGS[@]}"
+        "$(pwd)/$ARTIFACT"/main.c \
+        -o "$(pwd)/build/$ARTIFACT" "${LDFLAGS[@]}"
 
 fi

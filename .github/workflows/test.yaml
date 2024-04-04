@@ -35,7 +35,7 @@ jobs:
         run: git submodule update --init
 
       - name: Install Clang
-        run: sudo apt-get install -y clang llvm
+        run: sudo apt-get install -y clang
 
       - name: Run Tests
         run: |

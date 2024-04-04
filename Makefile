@@ -30,9 +30,9 @@ clean:
 ## run-test                            Run a test (e.g., make run-test ARCH=arm TEST=arch/generic/neuron)
 run-test:
 	@echo building $(TEST)
-	@ARCH=$(ARCH) TARGET=tests/$(TEST) scripts/shell/build_arch_target.sh
+	@ARCH=$(ARCH) ARTIFACT=tests/$(TEST) scripts/shell/build_artifact.sh
 	@echo running $(TEST)
-	@ARCH=$(ARCH) TARGET=tests/$(TEST) ARGS="$(ARGS)" scripts/shell/run_arch_target.sh
+	@ARCH=$(ARCH) ARTIFACT=tests/$(TEST) ARGS="$(ARGS)" scripts/shell/run_artifact.sh
 	@echo " "
 
 ## test                                Run tests (e.g., make test ARCH=generic)
@@ -45,7 +45,7 @@ test:
 ## build-example                       Build an example (e.g., make build-example ARCH=arm EXAMPLE=arch/arm/neon/neuron)
 build-example:
 	@echo building $(EXAMPLE)
-	@ARCH=$(ARCH) TARGET=examples/$(EXAMPLE) scripts/shell/build_arch_target.sh
+	@ARCH=$(ARCH) ARTIFACT=examples/$(EXAMPLE) scripts/shell/build_artifact.sh
 
 ## build-examples                      Build all arch specific examples (e.g., make build-examples ARCH=arm)
 build-examples:
@@ -57,7 +57,7 @@ build-examples:
 ## run-example                         Run an examples (e.g., make run-example ARCH=arm EXAMPLE=arch/arm/neon/neuron)
 run-example:
 	@echo running $(EXAMPLE) $(ARGS)
-	@ARCH=$(ARCH) TARGET=examples/$(EXAMPLE) ARGS="$(ARGS)" scripts/shell/run_arch_target.sh
+	@ARCH=$(ARCH) ARTIFACT=examples/$(EXAMPLE) ARGS="$(ARGS)" scripts/shell/run_artifact.sh
 	@echo " "
 
 ## run-examples                        Run all arch specific examples (e.g., make run-examples ARCH=arm)
