@@ -41,10 +41,11 @@ jobs:
           #   tag: nntbn:armv7
           #   test: arm
 
-          - platform: linux/arm/v8
-            dockerfile: Dockerfile.arm
-            tag: nntbn:armv8
-            test: arm
+          # No NEON support for armv8
+          # - platform: linux/arm/v8
+          #   dockerfile: Dockerfile.arm
+          #   tag: nntbn:armv8
+          #   test: arm
 
           - platform: linux/amd64
             dockerfile: Dockerfile.generic
