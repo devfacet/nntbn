@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
     long long total_time_generic = 0;
     for (int i = 0; i < n_runs; ++i) {
         clock_gettime(CLOCK_MONOTONIC, &start);
-        nn_dot_product_generic(a, b, n_vectors);
+        nn_dot_product(a, b, n_vectors);
         clock_gettime(CLOCK_MONOTONIC, &end);
         total_time_generic += timespec_diff_ns(&start, &end);
     }

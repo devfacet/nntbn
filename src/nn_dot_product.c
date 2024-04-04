@@ -2,7 +2,7 @@
 #include <stddef.h>
 
 // nn_dot_product_neon calculates the dot product of two vectors.
-float nn_dot_product_generic(const float *a, const float *b, size_t length) {
+float nn_dot_product(const float *a, const float *b, size_t length) {
     NN_DEBUG_PRINT(5, "function %s called with length = %zu\n", __func__, length);
 
     // Initialize vector sum to 0
