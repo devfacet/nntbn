@@ -53,6 +53,7 @@ test:
 	@mkdir -p $(PWD)/build/tests/
 	@/usr/bin/gcc -Wall -fdiagnostics-color=always -g $(addprefix -D,$(DEFINES)) \
 		-Iinclude/ \
+		-Ilib/CMSIS_6/CMSIS/Core/Include \
 		-Ilib/CMSIS-DSP/Include \
 		lib/CMSIS-DSP/Source/BasicMathFunctions/arm_dot_prod_f32.c \
 		src/arch/arm/neon/*.c \
