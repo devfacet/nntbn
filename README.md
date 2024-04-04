@@ -8,7 +8,7 @@ across various platforms, from server-grade hardware to desktops, mobile, and em
 
 ## Requirements
 
-- [Clang](https://clang.llvm.org/) or [GCC](https://gcc.gnu.org/)
+- [Clang](https://clang.llvm.org/)
 - [Make](https://www.gnu.org/software/make/)
 
 ### Recommended tools

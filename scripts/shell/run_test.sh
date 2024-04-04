@@ -6,7 +6,7 @@ IFS=$'\n\t'
 CC=clang
 CFLAGS=(-Wall -fdiagnostics-color=always)
 ARCH="${ARCH-}"
-EXAMPLE="${EXAMPLE-}"
+TEST="${TEST-}"
 
 # If the ARCH environment variable is not set then
 if [ -z "$ARCH" ]; then
@@ -14,9 +14,9 @@ if [ -z "$ARCH" ]; then
     exit 1
 fi
 
-# If the EXAMPLE environment variable is not set then
-if [ -z "$EXAMPLE" ]; then
-    echo "invalid EXAMPLE value"
+# If the TEST environment variable is not set then
+if [ -z "$TEST" ]; then
+    echo "invalid TEST value"
     exit 1
 fi
 
@@ -28,7 +28,7 @@ else
 fi
 
 # Ensure that the build directory exists
-mkdir -p "$(pwd)/build/examples/$(dirname "$EXAMPLE")"
+mkdir -p "$(pwd)/build/tests/$(dirname "$TEST")"
 
 # Compile
 if [ "$ARCH" = "arm" ]; then
@@ -41,14 +41,17 @@ if [ "$ARCH" = "arm" ]; then
         src/arch/arm/neon/*.c \
         src/arch/arm/cmsis/*.c \
         src/*.c \
-        examples/"$EXAMPLE"/main.c \
-        -o "$(pwd)/build/examples/$EXAMPLE"
+        tests/"$TEST"/main.c \
+        -o "$(pwd)/build/tests/$TEST"
 elif [ "$ARCH" = "generic" ]; then
     # Compile for generic architecture
     $CC "${CFLAGS[@]}" \
         "$DEFINES_FLAGS" \
         -Iinclude/ \
         src/*.c \
-        examples/"$EXAMPLE"/main.c \
-        -o "$(pwd)/build/examples/$EXAMPLE"
+        tests/"$TEST"/main.c \
+        -o "$(pwd)/build/tests/$TEST"
 fi
+
+# Run
+"$(pwd)/build/tests/$TEST"

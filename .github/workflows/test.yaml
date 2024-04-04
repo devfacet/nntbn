@@ -34,8 +34,8 @@ jobs:
       - name: Checkout submodules
         run: git submodule update --init
 
-      - name: Install ARM GCC Toolchain
-        run: sudo apt-get install -y gcc-arm-none-eabi
+      - name: Install Clang
+        run: sudo apt-get install -y clang llvm
 
       - name: Run Tests
         run: |

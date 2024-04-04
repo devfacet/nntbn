@@ -2,6 +2,10 @@
 MAKEFILE := $(lastword $(MAKEFILE_LIST))
 BASENAME := $(shell basename "$(PWD)")
 SHELL := /bin/bash
+ifeq ($(ARCH),)
+ARCH := generic
+endif
+export ARCH
 
 .PHONY: help run-arm-examples
 all: help
@@ -11,6 +15,30 @@ help: Makefile
 	@echo
 	@sed -n 's/^##//p' $< | sed -e 's/^/ /' | sort
 	@echo
+
+## clean                               Clean the build directory
+clean:
+	@if [ -z "$(PWD)" ]; then \
+		echo "PWD variable is not set, aborting clean"; \
+	elif [ -d "$(PWD)/build" ]; then \
+		rm -rf "$(PWD)/build"; \
+		echo "build directory removed"; \
+	else \
+		echo "build directory does not exist, skipping"; \
+	fi
+
+## run-test                            Run a test (e.g., make run-test ARCH=arm TEST=arch/generic/neuron)
+run-test:
+	@echo running $(TEST)
+	@ARCH=$(ARCH) TEST=$(TEST) scripts/shell/run_test.sh
+	@echo " "
+
+## test                                Run tests (e.g., make test ARCH=generic)
+test:
+	@$(eval TESTS := $(shell find tests/arch/$(ARCH) -type f -name 'main.c' | sed 's|/main.c||' | sed 's|tests/||' | sed 's|^/||'))
+	@for test in $(TESTS); do \
+		$(MAKE) run-test @ARCH=$(ARCH) TEST=$$test; \
+	done
 
 ## build-example                       Build an example (e.g., make build-example ARCH=arm EXAMPLE=arch/arm/neon/neuron)
 build-example:
@@ -36,29 +64,3 @@ run-examples:
 	@for example in $(EXAMPLES); do \
 		$(MAKE) run-example @ARCH=$(ARCH) EXAMPLE=$$example; \
 	done
-
-## clean                               Clean the build directory
-clean:
-	@if [ -z "$(PWD)" ]; then \
-		echo "PWD variable is not set, aborting clean"; \
-	elif [ -d "$(PWD)/build" ]; then \
-		rm -rf "$(PWD)/build"; \
-		echo "build directory removed"; \
-	else \
-		echo "build directory does not exist, skipping"; \
-	fi
-
-## test                                Run tests
-test:
-	@mkdir -p $(PWD)/build/tests/
-	@/usr/bin/gcc -Wall -fdiagnostics-color=always -g $(addprefix -D,$(DEFINES)) \
-		-Iinclude/ \
-		-Ilib/CMSIS_6/CMSIS/Core/Include \
-		-Ilib/CMSIS-DSP/Include \
-		lib/CMSIS-DSP/Source/BasicMathFunctions/arm_dot_prod_f32.c \
-		src/arch/arm/neon/*.c \
-		src/arch/arm/cmsis/*.c \
-		src/*.c \
-		tests/*.c \
-		-o $(PWD)/build/tests/tests
-	@$(PWD)/build/tests/tests

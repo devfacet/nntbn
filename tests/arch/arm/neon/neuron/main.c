@@ -1,16 +1,10 @@
+#include "arch/arm/neon/nn_dot_product.h"
 #include "nn_config.h"
 #include "nn_neuron.h"
 #include <assert.h>
 #include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
-
-#if defined(NN_NEON_AVAILABLE)
-#include "arch/arm/neon/nn_dot_product.h"
-#endif
-#if defined(NN_CMSIS_DSP_AVAILABLE)
-#include "arch/arm/cmsis/nn_dot_product.h"
-#endif
 
 // DEFAULT_OUTPUT_TOLERANCE defines the default tolerance for comparing output values.
 const float DEFAULT_OUTPUT_TOLERANCE = 0.0001f;
@@ -135,12 +129,6 @@ int main() {
             .expected_output = 0.000012f,
         },
     };
-    run_test_cases(test_cases, n_test_cases, "nn_dot_product", nn_dot_product);
-    if (nn_neon_available()) {
-        run_test_cases(test_cases, n_test_cases, "nn_dot_product_neon", nn_dot_product_neon);
-    }
-    if (nn_cmsis_dsp_available()) {
-        run_test_cases(test_cases, n_test_cases, "nn_dot_product_cmsis", nn_dot_product_cmsis);
-    }
+    run_test_cases(test_cases, n_test_cases, "nn_dot_product_neon", nn_dot_product_neon);
     return 0;
 }
