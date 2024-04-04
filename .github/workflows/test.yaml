@@ -27,16 +27,66 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - platform: linux/arm64
+            dockerfile: Dockerfile.arm
+            tag: nntbn:arm64
+            test: arm
+
+          # No NEON support for armv7
+          # - platform: linux/arm/v7
+          #   dockerfile: Dockerfile.arm
+          #   tag: nntbn:armv7
+          #   test: arm
+
+          # No NEON support for armv8
+          # - platform: linux/arm/v8
+          #   dockerfile: Dockerfile.arm
+          #   tag: nntbn:armv8
+          #   test: arm
+
+          - platform: linux/amd64
+            dockerfile: Dockerfile.generic
+            tag: nntbn:amd64
+            test: generic
+
+          - platform: linux/arm/v7
+            dockerfile: Dockerfile.generic
+            tag: nntbn:generic-armv7
+            test: generic
+
+          - platform: linux/arm/v8
+            dockerfile: Dockerfile.generic
+            tag: nntbn:generic-armv8
+            test: generic
     steps:
+      - name: Docker Setup QEMU
+        uses: docker/setup-qemu-action@v3.0.0
+        with:
+          platforms: all
+
+      - name: Docker Setup Buildx
+        uses: docker/setup-buildx-action@v3.2.0
+
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Checkout submodules
         run: git submodule update --init
 
-      - name: Install Clang
-        run: sudo apt-get install -y clang
-
-      - name: Run Tests
+      - name: Create Buildx
         run: |
-          make test
+          docker buildx create --name tests --use
+          docker buildx inspect --bootstrap
+
+      - name: Build and Run Test
+        run: |
+          docker buildx build --platform ${{ matrix.platform }} -f scripts/docker/${{ matrix.dockerfile }} -t ${{ matrix.tag }} . --load
+          if [ "${{ matrix.test }}" == "arm" ]; then
+            docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} /nn/build/tests/arch/arm/cmsis/neuron
+            docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} /nn/build/tests/arch/arm/neon/neuron
+          else
+            docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} /nn/build/tests/arch/generic/neuron
+          fi
