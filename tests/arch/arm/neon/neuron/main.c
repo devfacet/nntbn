@@ -6,6 +6,8 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+// N_TEST_CASES defines the number of test cases.
+const int N_TEST_CASES = 10;
 // DEFAULT_OUTPUT_TOLERANCE defines the default tolerance for comparing output values.
 const float DEFAULT_OUTPUT_TOLERANCE = 0.0001f;
 
@@ -37,8 +39,7 @@ void run_test_cases(TestCase *test_cases, int n_cases, char *info, NNDotProductF
 }
 
 int main() {
-    const int n_test_cases = 10;
-    TestCase test_cases[n_test_cases] = {
+    TestCase test_cases[N_TEST_CASES] = {
         {
             .inputs = {0.5f, 1.2f, -0.8f},
             .weights = {0.2f, 0.3f, -0.1f},
@@ -129,6 +130,6 @@ int main() {
             .expected_output = 0.000012f,
         },
     };
-    run_test_cases(test_cases, n_test_cases, "nn_dot_product_neon", nn_dot_product_neon);
+    run_test_cases(test_cases, N_TEST_CASES, "nn_dot_product_neon", nn_dot_product_neon);
     return 0;
 }

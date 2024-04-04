@@ -1,0 +1,27 @@
+# Example usage:
+# Build:
+#   docker buildx build --platform linux/amd64 -f scripts/docker/Dockerfile.generic -t nntbn:generic . --load
+# Run:
+#   docker run --rm -it --platform linux/amd64 nntbn:generic /nn/build/tests/arch/generic/neuron
+
+# Build
+FROM ubuntu:latest as build
+ENV DEBIAN_FRONTEND=noninteractive
+
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    clang \
+    lld
+COPY . /nn
+WORKDIR /nn
+RUN make build-examples ARCH=generic LDFLAGS="-lm"
+RUN make test ARCH=generic LDFLAGS="-lm"
+
+# Runtime
+FROM ubuntu:latest
+WORKDIR /nn
+COPY --from=build /nn /nn
+
+ENTRYPOINT ["/bin/bash", "-c"]
+CMD ["/bin/bash"]
