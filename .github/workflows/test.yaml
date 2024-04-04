@@ -32,10 +32,33 @@ jobs:
         include:
           - platform: linux/arm64
             dockerfile: Dockerfile.arm
-            tag: nntbn:arm
+            tag: nntbn:arm64
+            test: arm
+
+          - platform: linux/arm/v7
+            dockerfile: Dockerfile.arm
+            tag: nntbn:armv7
+            test: arm
+
+          - platform: linux/arm/v6
+            dockerfile: Dockerfile.arm
+            tag: nntbn:armv6
+            test: arm
+
           - platform: linux/amd64
             dockerfile: Dockerfile.generic
-            tag: nntbn:generic
+            tag: nntbn:amd64
+            test: generic
+
+          - platform: linux/arm/v7
+            dockerfile: Dockerfile.generic
+            tag: nntbn:generic-armv7
+            test: generic
+
+          - platform: linux/arm/v6
+            dockerfile: Dockerfile.generic
+            tag: nntbn:generic-armv6
+            test: generic
     steps:
       - name: Docker Setup QEMU
         uses: docker/setup-qemu-action@v3.0.0
@@ -56,15 +79,13 @@ jobs:
           docker buildx create --name tests --use
           docker buildx inspect --bootstrap
 
-      - name: Build and Run Tests for ARM
+      - name: Build and Run Test
         run: |
           docker buildx build --platform ${{ matrix.platform }} -f scripts/docker/${{ matrix.dockerfile }} -t ${{ matrix.tag }} . --load
-          docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} /nn/build/tests/arch/arm/cmsis/neuron
-          docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} /nn/build/tests/arch/arm/neon/neuron
-        if: matrix.platform == 'linux/arm64'
-      
-      - name: Build and Run Tests for Generic
-        run: |
-          docker buildx build --platform ${{ matrix.platform }} -f scripts/docker/${{ matrix.dockerfile }} -t ${{ matrix.tag }} . --load
-          docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} /nn/build/tests/arch/generic/neuron
-        if: matrix.platform == 'linux/amd64'
+          if [ "${{ matrix.test }}" == "arm" ]; then
+            docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} /nn/build/tests/arch/arm/cmsis/neuron
+            docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} /nn/build/tests/arch/arm/neon/neuron
+            docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} /nn/build/tests/arch/generic/neuron
+          else
+            docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} /nn/build/tests/arch/generic/neuron
+          fi
