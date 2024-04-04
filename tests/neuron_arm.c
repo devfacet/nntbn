@@ -135,7 +135,7 @@ int main() {
             .expected_output = 0.000012f,
         },
     };
-    run_test_cases(test_cases, n_test_cases, "nn_dot_product_generic", nn_dot_product_generic);
+    run_test_cases(test_cases, n_test_cases, "nn_dot_product", nn_dot_product);
     if (nn_neon_available()) {
         run_test_cases(test_cases, n_test_cases, "nn_dot_product_neon", nn_dot_product_neon);
     }

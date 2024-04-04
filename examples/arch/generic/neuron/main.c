@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
     float bias = 2.0f;
 
     // Compute the output
-    nn_init_neuron(&neuron, weights, n_inputs, bias, nn_activation_func_identity, nn_dot_product_generic);
+    nn_init_neuron(&neuron, weights, n_inputs, bias, nn_activation_func_identity, nn_dot_product);
     const float output = nn_compute_neuron(&neuron, inputs, n_inputs, &error);
     if (isnan(output) || error.code != NN_ERROR_NONE) {
         printf("error (%d): %s\n", error.code, error.message);
