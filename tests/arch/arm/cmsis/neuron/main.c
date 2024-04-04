@@ -7,9 +7,9 @@
 #include <stdio.h>
 
 // N_TEST_CASES defines the number of test cases.
-const int N_TEST_CASES = 10;
+#define N_TEST_CASES 10
 // DEFAULT_OUTPUT_TOLERANCE defines the default tolerance for comparing output values.
-const float DEFAULT_OUTPUT_TOLERANCE = 0.0001f;
+#define DEFAULT_OUTPUT_TOLERANCE 0.0001f
 
 // TestCase defines a single test case.
 typedef struct {
