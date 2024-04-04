@@ -7,7 +7,7 @@ CC=clang
 CFLAGS=(-Wall -fdiagnostics-color=always)
 LDFLAGS=(-lm)
 ARCH="${ARCH-}"
-TEST="${TEST-}"
+TARGET="${TARGET-}"
 
 # If the ARCH environment variable is not set then
 if [ -z "$ARCH" ]; then
@@ -15,9 +15,9 @@ if [ -z "$ARCH" ]; then
     exit 1
 fi
 
-# If the TEST environment variable is not set then
-if [ -z "$TEST" ]; then
-    echo "invalid TEST value"
+# If the TARGET environment variable is not set then
+if [ -z "$TARGET" ]; then
+    echo "invalid TARGET value"
     exit 1
 fi
 
@@ -29,11 +29,11 @@ else
 fi
 
 # Ensure that the build directory exists
-mkdir -p "$(pwd)/build/tests/$(dirname "$TEST")"
+mkdir -p "$(pwd)/build/$(dirname "$TARGET")"
 
 # Compile
 if [ "$ARCH" = "arm" ]; then
-    # Compile for ARM
+    # Arm
     $CC "${CFLAGS[@]}" \
         "$DEFINES_FLAGS" \
         -Iinclude/ \
@@ -42,17 +42,16 @@ if [ "$ARCH" = "arm" ]; then
         src/arch/arm/neon/*.c \
         src/arch/arm/cmsis/*.c \
         src/*.c \
-        tests/"$TEST"/main.c \
-        -o "$(pwd)/build/tests/$TEST" "${LDFLAGS[@]}"
+        "$(pwd)/$TARGET"/main.c \
+        -o "$(pwd)/build/$TARGET" "${LDFLAGS[@]}"
+
 elif [ "$ARCH" = "generic" ]; then
-    # Compile for generic architecture
+    # Generic
     $CC "${CFLAGS[@]}" \
         "$DEFINES_FLAGS" \
         -Iinclude/ \
         src/*.c \
-        tests/"$TEST"/main.c \
-        -o "$(pwd)/build/tests/$TEST" "${LDFLAGS[@]}"
-fi
+        "$(pwd)/$TARGET"/main.c \
+        -o "$(pwd)/build/$TARGET" "${LDFLAGS[@]}"
 
-# Run
-"$(pwd)/build/tests/$TEST"
+fi
