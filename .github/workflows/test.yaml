@@ -45,8 +45,8 @@ jobs:
       - name: Run Tests
         run: |
           docker buildx build --platform linux/arm64 -f scripts/docker/Dockerfile.arm -t nntbn:arm . --load
-          docker run --rm -it --platform linux/arm64 nntbn:arm /nn/build/tests/arch/arm/cmsis/neuron
-          docker run --rm -it --platform linux/arm64 nntbn:arm /nn/build/tests/arch/arm/neon/neuron
+          docker run --platform linux/arm64 nntbn:arm /nn/build/tests/arch/arm/cmsis/neuron
+          docker run --platform linux/arm64 nntbn:arm /nn/build/tests/arch/arm/neon/neuron
 
           docker buildx build --platform linux/amd64 -f scripts/docker/Dockerfile.generic -t nntbn:generic . --load
-          docker run --rm -it --platform linux/amd64 nntbn:generic /nn/build/tests/arch/generic/neuron
+          docker run --platform linux/amd64 nntbn:generic /nn/build/tests/arch/generic/neuron
