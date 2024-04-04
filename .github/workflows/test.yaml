@@ -87,7 +87,6 @@ jobs:
           if [ "${{ matrix.test }}" == "arm" ]; then
             docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} /nn/build/tests/arch/arm/cmsis/neuron
             docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} /nn/build/tests/arch/arm/neon/neuron
-            docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} /nn/build/tests/arch/generic/neuron
           else
             docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} /nn/build/tests/arch/generic/neuron
           fi

@@ -24,8 +24,8 @@ int main(int argc, char *argv[]) {
     float *a = malloc(n_vectors * sizeof(float));
     float *b = malloc(n_vectors * sizeof(float));
     for (int i = 0; i < n_vectors; ++i) {
-        a[i] = (float)rand() / RAND_MAX;
-        b[i] = (float)rand() / RAND_MAX;
+        a[i] = (float)rand() / (float)RAND_MAX;
+        b[i] = (float)rand() / (float)RAND_MAX;
     }
 
     // Benchmark NEON implementation
