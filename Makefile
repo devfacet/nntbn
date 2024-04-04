@@ -2,6 +2,10 @@
 MAKEFILE := $(lastword $(MAKEFILE_LIST))
 BASENAME := $(shell basename "$(PWD)")
 SHELL := /bin/bash
+ifeq ($(ARCH),)
+ARCH := generic
+endif
+export ARCH
 
 .PHONY: help run-arm-examples
 all: help
@@ -11,31 +15,6 @@ help: Makefile
 	@echo
 	@sed -n 's/^##//p' $< | sed -e 's/^/ /' | sort
 	@echo
-
-## build-example                       Build an example (e.g., make build-example ARCH=arm EXAMPLE=arch/arm/neon/neuron)
-build-example:
-	@echo building $(EXAMPLE)
-	@ARCH=$(ARCH) EXAMPLE=$(EXAMPLE) scripts/shell/build_example.sh
-
-## build-examples                      Build all arch specific examples (e.g., make build-examples ARCH=arm)
-build-examples:
-	@$(eval EXAMPLES := $(shell find examples/arch/$(ARCH) -type f -name 'main.c' | sed 's|/main.c||' | sed 's|examples/||' | sed 's|^/||'))
-	@for example in $(EXAMPLES); do \
-		$(MAKE) build-example ARCH=$(ARCH) EXAMPLE=$$example; \
-	done
-
-## run-example                         Run an examples (e.g., make run-example ARCH=arm EXAMPLE=arch/arm/neon/neuron)
-run-example:
-	@echo running $(EXAMPLE) $(ARGS)
-	@ARCH=$(ARCH) EXAMPLE=$(EXAMPLE) ARGS="$(ARGS)" scripts/shell/run_example.sh
-	@echo " "
-
-## run-examples                        Run all arch specific examples (e.g., make run-examples ARCH=arm)
-run-examples:
-	@$(eval EXAMPLES := $(shell find examples/arch/$(ARCH) -type f -name 'main.c' | sed 's|/main.c||' | sed 's|examples/||' | sed 's|^/||'))
-	@for example in $(EXAMPLES); do \
-		$(MAKE) run-example @ARCH=$(ARCH) EXAMPLE=$$example; \
-	done
 
 ## clean                               Clean the build directory
 clean:
@@ -48,16 +27,42 @@ clean:
 		echo "build directory does not exist, skipping"; \
 	fi
 
-## test                                Run tests
+## run-test                            Run a test (e.g., make run-test ARCH=arm TEST=arch/generic/neuron)
+run-test:
+	@echo building $(TEST)
+	@ARCH=$(ARCH) ARTIFACT=tests/$(TEST) scripts/shell/build_artifact.sh
+	@echo running $(TEST)
+	@ARCH=$(ARCH) ARTIFACT=tests/$(TEST) ARGS="$(ARGS)" scripts/shell/run_artifact.sh
+	@echo " "
+
+## test                                Run tests (e.g., make test ARCH=generic)
 test:
-	@mkdir -p $(PWD)/build/tests/
-	@/usr/bin/gcc -Wall -fdiagnostics-color=always -g $(addprefix -D,$(DEFINES)) \
-		-Iinclude/ \
-		-Ilib/CMSIS-DSP/Include \
-		lib/CMSIS-DSP/Source/BasicMathFunctions/arm_dot_prod_f32.c \
-		src/arch/arm/neon/*.c \
-		src/arch/arm/cmsis/*.c \
-		src/*.c \
-		tests/*.c \
-		-o $(PWD)/build/tests/tests
-	@$(PWD)/build/tests/tests
+	@$(eval TESTS := $(shell find tests/arch/$(ARCH) -type f -name 'main.c' | sed 's|/main.c||' | sed 's|tests/||' | sed 's|^/||'))
+	@for test in $(TESTS); do \
+		$(MAKE) run-test @ARCH=$(ARCH) TEST=$$test; \
+	done
+
+## build-example                       Build an example (e.g., make build-example ARCH=arm EXAMPLE=arch/arm/neon/neuron)
+build-example:
+	@echo building $(EXAMPLE)
+	@ARCH=$(ARCH) ARTIFACT=examples/$(EXAMPLE) scripts/shell/build_artifact.sh
+
+## build-examples                      Build all arch specific examples (e.g., make build-examples ARCH=arm)
+build-examples:
+	@$(eval EXAMPLES := $(shell find examples/arch/$(ARCH) -type f -name 'main.c' | sed 's|/main.c||' | sed 's|examples/||' | sed 's|^/||'))
+	@for example in $(EXAMPLES); do \
+		$(MAKE) build-example ARCH=$(ARCH) EXAMPLE=$$example; \
+	done
+
+## run-example                         Run an examples (e.g., make run-example ARCH=arm EXAMPLE=arch/arm/neon/neuron)
+run-example:
+	@echo running $(EXAMPLE) $(ARGS)
+	@ARCH=$(ARCH) ARTIFACT=examples/$(EXAMPLE) ARGS="$(ARGS)" scripts/shell/run_artifact.sh
+	@echo " "
+
+## run-examples                        Run all arch specific examples (e.g., make run-examples ARCH=arm)
+run-examples:
+	@$(eval EXAMPLES := $(shell find examples/arch/$(ARCH) -type f -name 'main.c' | sed 's|/main.c||' | sed 's|examples/||' | sed 's|^/||'))
+	@for example in $(EXAMPLES); do \
+		$(MAKE) run-example @ARCH=$(ARCH) EXAMPLE=$$example; \
+	done

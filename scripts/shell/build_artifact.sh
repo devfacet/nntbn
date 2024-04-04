@@ -4,7 +4,11 @@ IFS=$'\n\t'
 
 # Init vars
 ARCH="${ARCH-}"
-EXAMPLE="${EXAMPLE-}"
+TARGET="${TARGET-}"
+ARTIFACT="${ARTIFACT-}"
+CC=clang
+CFLAGS+=(-Wall -fdiagnostics-color=always)
+LDFLAGS+=(-lm)
 
 # If the ARCH environment variable is not set then
 if [ -z "$ARCH" ]; then
@@ -12,9 +16,9 @@ if [ -z "$ARCH" ]; then
     exit 1
 fi
 
-# If the EXAMPLE environment variable is not set then
-if [ -z "$EXAMPLE" ]; then
-    echo "invalid EXAMPLE value"
+# If the ARTIFACT environment variable is not set then
+if [ -z "$ARTIFACT" ] || [ "$ARTIFACT" = "examples/" ] || [ "$ARTIFACT" = "tests/" ]; then
+    echo "invalid ARTIFACT value"
     exit 1
 fi
 
@@ -25,17 +29,13 @@ else
     DEFINES_FLAGS=""
 fi
 
-
 # Ensure that the build directory exists
-mkdir -p "$(pwd)/build/examples/$(dirname "$EXAMPLE")"
+mkdir -p "$(pwd)/build/$(dirname "$ARTIFACT")"
 
 # Compile
 if [ "$ARCH" = "arm" ]; then
-    # Compile for ARM
-    /usr/bin/gcc \
-        -Wall \
-        -fdiagnostics-color=always \
-        -g \
+    # Arm
+    $CC "${CFLAGS[@]}" \
         "$DEFINES_FLAGS" \
         -Iinclude/ \
         -Ilib/CMSIS-DSP/Include \
@@ -43,18 +43,16 @@ if [ "$ARCH" = "arm" ]; then
         src/arch/arm/neon/*.c \
         src/arch/arm/cmsis/*.c \
         src/*.c \
-        examples/"$EXAMPLE"/main.c \
-        -o "$(pwd)/build/examples/$EXAMPLE"
-    exit 0
+        "$(pwd)/$ARTIFACT"/main.c \
+        -o "$(pwd)/build/$ARTIFACT" "${LDFLAGS[@]}"
+
 elif [ "$ARCH" = "generic" ]; then
-    # Compile for generic architecture
-    /usr/bin/gcc \
-        -Wall \
-        -fdiagnostics-color=always \
-        -g \
+    # Generic
+    $CC "${CFLAGS[@]}" \
         "$DEFINES_FLAGS" \
         -Iinclude/ \
         src/*.c \
-        examples/"$EXAMPLE"/main.c \
-        -o "$(pwd)/build/examples/$EXAMPLE"
+        "$(pwd)/$ARTIFACT"/main.c \
+        -o "$(pwd)/build/$ARTIFACT" "${LDFLAGS[@]}"
+
 fi
