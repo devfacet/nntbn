@@ -40,9 +40,9 @@ jobs:
             tag: nntbn:armv7
             test: arm
 
-          - platform: linux/arm/v6
+          - platform: linux/arm/v8
             dockerfile: Dockerfile.arm
-            tag: nntbn:armv6
+            tag: nntbn:armv8
             test: arm
 
           - platform: linux/amd64
@@ -55,9 +55,9 @@ jobs:
             tag: nntbn:generic-armv7
             test: generic
 
-          - platform: linux/arm/v6
+          - platform: linux/arm/v8
             dockerfile: Dockerfile.generic
-            tag: nntbn:generic-armv6
+            tag: nntbn:generic-armv8
             test: generic
     steps:
       - name: Docker Setup QEMU
