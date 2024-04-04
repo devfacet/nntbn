@@ -1,0 +1,18 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug neuron-01",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/examples/arch/generic/neuron",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "lldb",
+      "preLaunchTask": "build-example-generic-neuron"
+    }
+  ]
+}

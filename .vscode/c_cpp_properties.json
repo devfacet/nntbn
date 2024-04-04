@@ -1,0 +1,39 @@
+{
+    "env": {
+        "includePath": [
+            "${workspaceFolder}/include",
+            "${workspaceFolder}/lib/CMSIS_6/CMSIS/Core/Include",
+            "${workspaceFolder}/lib/CMSIS-DSP/Include"
+        ],
+        "defines": [
+        ]
+    },
+    "configurations": [
+        {
+            "name": "Mac",
+            "compilerPath": "/usr/bin/clang",
+            "intelliSenseMode": "macos-clang-arm64",
+            "includePath": [
+                "${default}",
+                "${includePath}"
+            ],
+            "defines": [
+                "${defines}"
+            ],
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "macFrameworkPath": [
+                "/System/Library/Frameworks",
+                "/Library/Frameworks"
+            ],
+            "browse": {
+                "path": [
+                    "${includePath}",
+                    "${workspaceFolder}"
+                ]
+            }
+        }
+    ],
+    "version": 4,
+    "enableConfigurationSquiggles": true
+}

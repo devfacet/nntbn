@@ -1,0 +1,53 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "cppbuild",
+			"label": "build-example-generic-neuron",
+			"detail": "Build examples/arch/generic/neuron",
+			"command": "/usr/bin/gcc",
+			"args": [
+				"-Wall", // enable all warnings
+				"-fdiagnostics-color=always", // colorize diagnostics
+				"-g", // include debug information
+				"-Iinclude",
+				"src/*.c",
+				"examples/arch/generic/neuron/main.c",
+				"-o",
+				"${workspaceFolder}/build/examples/arch/generic/neuron"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+		},
+		{
+			"type": "shell",
+			"label": "run-example-generic-neuron",
+			"detail": "Run examples/arch/generic/neuron",
+			"command": "${workspaceFolder}/build/examples/arch/generic/neuron",
+			// "args": [],
+			// "options": {
+			// 	"env": {},
+			// },
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			},
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			},
+			"problemMatcher": [],
+			"dependsOn": [
+				"build-example-generic-neuron"
+			],
+		},
+	]
+}

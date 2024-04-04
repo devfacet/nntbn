@@ -1,0 +1,11 @@
+.DS_Store
+*.o
+.so
+*.dylib
+build
+
+.vscode/*
+!.vscode/c_cpp_properties.json
+!.vscode/launch.json
+!.vscode/tasks.json
+!.vscode/example_settings.json
