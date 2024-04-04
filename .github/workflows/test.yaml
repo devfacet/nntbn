@@ -27,6 +27,15 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - platform: linux/arm64
+            dockerfile: Dockerfile.arm
+            tag: nntbn:arm
+          - platform: linux/amd64
+            dockerfile: Dockerfile.generic
+            tag: nntbn:generic
     steps:
       - name: Docker Setup QEMU
         uses: docker/setup-qemu-action@v3.0.0
@@ -42,11 +51,19 @@ jobs:
       - name: Checkout submodules
         run: git submodule update --init
 
-      - name: Run Tests
+      - name: Create Buildx
         run: |
-          docker buildx build --platform linux/arm64 -f scripts/docker/Dockerfile.arm -t nntbn:arm . --load
-          docker run --platform linux/arm64 nntbn:arm /nn/build/tests/arch/arm/cmsis/neuron
-          docker run --platform linux/arm64 nntbn:arm /nn/build/tests/arch/arm/neon/neuron
+          docker buildx create --name tests --use
+          docker buildx inspect --bootstrap
 
-          docker buildx build --platform linux/amd64 -f scripts/docker/Dockerfile.generic -t nntbn:generic . --load
-          docker run --platform linux/amd64 nntbn:generic /nn/build/tests/arch/generic/neuron
+      - name: Build and Run Tests
+        run: |
+          docker buildx build --platform ${{ matrix.platform }} -f scripts/docker/${{ matrix.dockerfile }} -t ${{ matrix.tag }} . --load
+          docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} /nn/build/tests/arch/arm/cmsis/neuron
+          docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} /nn/build/tests/arch/arm/neon/neuron
+        if: matrix.platform == 'linux/arm64'
+      
+      - name: Build and Run Tests for Generic
+        run: |
+          docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} /nn/build/tests/arch/generic/neuron
+        if: matrix.platform == 'linux/amd64'
