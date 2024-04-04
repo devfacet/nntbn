@@ -5,6 +5,7 @@ IFS=$'\n\t'
 # Init vars
 CC=clang
 CFLAGS=(-Wall -fdiagnostics-color=always)
+LDFLAGS=(-lm)
 ARCH="${ARCH-}"
 EXAMPLE="${EXAMPLE-}"
 
@@ -42,7 +43,7 @@ if [ "$ARCH" = "arm" ]; then
         src/arch/arm/cmsis/*.c \
         src/*.c \
         examples/"$EXAMPLE"/main.c \
-        -o "$(pwd)/build/examples/$EXAMPLE"
+        -o "$(pwd)/build/examples/$EXAMPLE" "${LDFLAGS[@]}"
 elif [ "$ARCH" = "generic" ]; then
     # Compile for generic architecture
     $CC "${CFLAGS[@]}" \
@@ -50,5 +51,5 @@ elif [ "$ARCH" = "generic" ]; then
         -Iinclude/ \
         src/*.c \
         examples/"$EXAMPLE"/main.c \
-        -o "$(pwd)/build/examples/$EXAMPLE"
+        -o "$(pwd)/build/examples/$EXAMPLE" "${LDFLAGS[@]}"
 fi
