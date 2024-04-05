@@ -81,9 +81,9 @@ jobs:
           docker buildx build --platform ${{ matrix.platform }} -f scripts/docker/${{ matrix.dockerfile }} -t ${{ matrix.tag }} . --load
           if [ "${{ matrix.test }}" == "arm-neon" ]; then
             docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} /nn/build/tests/arch/arm/neon/neuron
-          else if [ "${{ matrix.test }}" == "arm-cmsis-dsp" ]; then
+          elif [ "${{ matrix.test }}" == "arm-cmsis-dsp" ]; then
             docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} /nn/build/tests/arch/arm/cmsis-dsp/neuron
-          else if [ "${{ matrix.test }}" == "generic" ]; then
+          elif [ "${{ matrix.test }}" == "generic" ]; then
             docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} /nn/build/tests/arch/generic/neuron
           else
             echo "unknown test"
