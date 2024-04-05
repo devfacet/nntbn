@@ -7,7 +7,20 @@ ARCH="${ARCH-}"
 TECH="${TECH-}"
 ARTIFACT="${ARTIFACT-}"
 CC="${CC:-clang}"
-CFLAGS+=(-Wall -fdiagnostics-color=always)
+CFLAGS_ARRAY=(-Wall -fdiagnostics-color=always)
+
+# Check and add CFLAGS to CFLAGS_ARRAY
+if [ -n "${CFLAGS-}" ]; then
+    IFS=' ' read -ra CFLAGS_PARTS <<< "$CFLAGS"
+    CFLAGS_ARRAY+=("${CFLAGS_PARTS[@]}")
+fi
+
+# Check and add LDFLAGS to LDFLAGS_ARRAY
+if [ -n "${LDFLAGS-}" ]; then
+    IFS=' ' read -ra LDFLAGS_ARRAY <<< "$LDFLAGS"
+else
+    LDFLAGS_ARRAY=()
+fi
 
 # If the ARCH environment variable is not set then
 if [ -z "$ARCH" ]; then
@@ -19,13 +32,6 @@ fi
 if [ -z "$ARTIFACT" ] || [ "$ARTIFACT" = "examples/" ] || [ "$ARTIFACT" = "tests/" ]; then
     echo "invalid ARTIFACT value"
     exit 1
-fi
-
-# If the DEFINES environment variable is set then
-if declare -p DEFINES &>/dev/null; then
-    DEFINES_FLAGS=$(printf -- '-D%s ' "${DEFINES[@]}")
-else
-    DEFINES_FLAGS=""
 fi
 
 # Ensure that the build directory exists
@@ -46,12 +52,11 @@ for tech in "${TECHS[@]:-}"; do
     fi
 done
 
-# set -x
-$CC "${CFLAGS[@]}" \
-    "$DEFINES_FLAGS" \
+#set -x
+$CC "${CFLAGS_ARRAY[@]}" \
     -Iinclude/ \
     "${CC_PARTS[@]:-}" \
     src/*.c \
     "$(pwd)/$ARTIFACT"/main.c \
-    -o "$(pwd)/build/$ARTIFACT" "${LDFLAGS[@]:-}"
-# set +x
+    -o "$(pwd)/build/$ARTIFACT" "${LDFLAGS_ARRAY[@]}"
+#set +x
