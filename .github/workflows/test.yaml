@@ -30,10 +30,10 @@ jobs:
     strategy:
       matrix:
         include:
-          - platform: linux/amd64
-            dockerfile: Dockerfile.generic
-            tag: nntbn:amd64
-            test: generic
+          # - platform: linux/amd64
+          #   dockerfile: Dockerfile.generic
+          #   tag: nntbn:amd64
+          #   test: generic
 
           # - platform: linux/arm/v7
           #   dockerfile: Dockerfile.generic
@@ -51,7 +51,7 @@ jobs:
           #   test: arm-cmsis-dsp
 
           - platform: linux/arm/v8
-            dockerfile: Dockerfile.arm-neon
+            dockerfile: Dockerfile.armv8-neon
             tag: nntbn:armv8-neon
             test: arm-neon
 
