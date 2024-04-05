@@ -30,26 +30,31 @@ jobs:
     strategy:
       matrix:
         include:
-          - platform: linux/amd64
-            dockerfile: Dockerfile.generic
-            tag: nntbn:amd64
-            test: generic
+          # - platform: linux/amd64
+          #   dockerfile: Dockerfile.generic
+          #   tag: nntbn:amd64
+          #   test: generic
 
-          - platform: linux/arm/v7
-            dockerfile: Dockerfile.generic
-            tag: nntbn:generic-armv7
-            test: generic
+          # - platform: linux/arm/v7
+          #   dockerfile: Dockerfile.generic
+          #   tag: nntbn:generic-armv7
+          #   test: generic
 
-          - platform: linux/arm/v8
-            dockerfile: Dockerfile.generic
-            tag: nntbn:generic-armv8
-            test: generic
+          # - platform: linux/arm/v8
+          #   dockerfile: Dockerfile.generic
+          #   tag: nntbn:generic-armv8
+          #   test: generic
 
           # TODO: Arm Neon is not available on ubuntu:latest image, try another one
+          # - platform: linux/arm64
+          #   dockerfile: Dockerfile.arm-neon
+          #   tag: nntbn:arm64
+          #   test: arm-neon
+
           - platform: linux/arm64
-            dockerfile: Dockerfile.arm-neon
+            dockerfile: Dockerfile.arm-cmsis-dsp
             tag: nntbn:arm64
-            test: arm-neon
+            test: arm-cmsis-dsp
 
     steps:
       - name: Docker Setup QEMU
@@ -76,6 +81,11 @@ jobs:
           docker buildx build --platform ${{ matrix.platform }} -f scripts/docker/${{ matrix.dockerfile }} -t ${{ matrix.tag }} . --load
           if [ "${{ matrix.test }}" == "arm-neon" ]; then
             docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} /nn/build/tests/arch/arm/neon/neuron
-          else
+          else if [ "${{ matrix.test }}" == "arm-cmsis-dsp" ]; then
+            docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} /nn/build/tests/arch/arm/cmsis-dsp/neuron
+          else if [ "${{ matrix.test }}" == "generic" ]; then
             docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} /nn/build/tests/arch/generic/neuron
+          else
+            echo "unknown test"
+            exit 1
           fi
