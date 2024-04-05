@@ -29,21 +29,29 @@ git submodule update --init
 ### Build and run examples
 
 ```shell
-# Build Arm examples
-make build-examples ARCH=arm
-# Run Arm examples
-make run-examples ARCH=arm
-
 # Build generic examples
 make build-examples ARCH=generic
 # Run generic examples
 make run-examples ARCH=generic
+
+# Build Arm examples
+make build-examples ARCH=arm TECH=neon
+make build-examples ARCH=arm TECH=cmsis-dsp
+make build-examples ARCH=arm TECH=neon,cmsis-dsp
+# Run Arm examples
+make run-examples ARCH=arm TECH=neon
+make run-examples ARCH=arm TECH=cmsis-dsp
+make run-examples ARCH=arm TECH=neon,cmsis-dsp
 ```
 
 ## Test
 
 ```shell
 make test
+make test ARCH=generic
+make test ARCH=arm TECH=neon
+make test ARCH=arm TECH=cmsis-dsp
+make test ARCH=arm TECH=neon,cmsis-dsp
 ```
 
 ## Contributing

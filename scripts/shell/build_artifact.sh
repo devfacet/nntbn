@@ -4,9 +4,9 @@ IFS=$'\n\t'
 
 # Init vars
 ARCH="${ARCH-}"
-TARGET="${TARGET-}"
+TECH="${TECH-}"
 ARTIFACT="${ARTIFACT-}"
-CC=clang
+CC="${CC:-clang}"
 CFLAGS+=(-Wall -fdiagnostics-color=always)
 
 # If the ARCH environment variable is not set then
@@ -32,27 +32,26 @@ fi
 mkdir -p "$(pwd)/build/$(dirname "$ARTIFACT")"
 
 # Compile
-if [ "$ARCH" = "arm" ]; then
-    # Arm
-    $CC "${CFLAGS[@]}" \
-        "$DEFINES_FLAGS" \
-        -Iinclude/ \
-        -Ilib/CMSIS_6/CMSIS/Core/Include \
-        -Ilib/CMSIS-DSP/Include \
-        lib/CMSIS-DSP/Source/BasicMathFunctions/arm_dot_prod_f32.c \
-        src/arch/arm/neon/*.c \
-        src/arch/arm/cmsis/*.c \
-        src/*.c \
-        "$(pwd)/$ARTIFACT"/main.c \
-        -o "$(pwd)/build/$ARTIFACT" "${LDFLAGS[@]:-}"
+CC_PARTS=()
+# Convert comma-separated TECH to an array
+IFS=',' read -ra TECHS <<< "$TECH"
+for tech in "${TECHS[@]:-}"; do
+    if [ "$tech" = "neon" ]; then
+        # Arm NEON
+        CC_PARTS+=(src/arch/arm/neon/*.c)
+    fi
+    if [ "$tech" = "cmsis-dsp" ]; then
+        # Arm CMSIS-DSP
+        CC_PARTS+=(-Ilib/CMSIS_6/CMSIS/Core/Include -Ilib/CMSIS-DSP/Include lib/CMSIS-DSP/Source/BasicMathFunctions/arm_dot_prod_f32.c src/arch/arm/cmsis-dsp/*.c)
+    fi
+done
 
-elif [ "$ARCH" = "generic" ]; then
-    # Generic
-    $CC "${CFLAGS[@]}" \
-        "$DEFINES_FLAGS" \
-        -Iinclude/ \
-        src/*.c \
-        "$(pwd)/$ARTIFACT"/main.c \
-        -o "$(pwd)/build/$ARTIFACT" "${LDFLAGS[@]:-}"
-
-fi
+# set -x
+$CC "${CFLAGS[@]}" \
+    "$DEFINES_FLAGS" \
+    -Iinclude/ \
+    "${CC_PARTS[@]:-}" \
+    src/*.c \
+    "$(pwd)/$ARTIFACT"/main.c \
+    -o "$(pwd)/build/$ARTIFACT" "${LDFLAGS[@]:-}"
+# set +x

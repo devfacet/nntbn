@@ -3,6 +3,7 @@
 #   docker buildx build --platform linux/amd64 -f scripts/docker/Dockerfile.generic -t nntbn:generic . --load
 # Run:
 #   docker run --rm -it --platform linux/amd64 nntbn:generic /nn/build/tests/arch/generic/neuron
+#   docker run --rm -it --platform linux/amd64 nntbn:generic /nn/build/examples/arch/generic/dot_product
 
 # Build
 FROM ubuntu:latest as build
