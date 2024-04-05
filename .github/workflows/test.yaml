@@ -50,6 +50,11 @@ jobs:
             tag: nntbn:armv8-neon
             test: arm-neon
 
+          - platform: linux/arm/v7
+            dockerfile: Dockerfile.armv7-neon
+            tag: nntbn:armv7-neon
+            test: arm-neon
+
     steps:
       - name: Docker Setup QEMU
         uses: docker/setup-qemu-action@v3.0.0
