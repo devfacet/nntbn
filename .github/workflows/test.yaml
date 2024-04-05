@@ -47,7 +47,7 @@ jobs:
 
           # TODO: Arm Neon is not available on ubuntu:latest image, try another one
           - platform: linux/arm64
-            dockerfile: Dockerfile.neon
+            dockerfile: Dockerfile.arm-neon
             tag: nntbn:arm64
             test: arm-neon
 
