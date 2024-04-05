@@ -30,10 +30,10 @@ jobs:
     strategy:
       matrix:
         include:
-          # - platform: linux/amd64
-          #   dockerfile: Dockerfile.generic
-          #   tag: nntbn:amd64
-          #   test: generic
+          - platform: linux/amd64
+            dockerfile: Dockerfile.generic
+            tag: nntbn:amd64
+            test: generic
 
           # - platform: linux/arm/v7
           #   dockerfile: Dockerfile.generic
@@ -45,11 +45,10 @@ jobs:
           #   tag: nntbn:generic-armv8
           #   test: generic
 
-          # TODO: Arm Neon is not available on ubuntu:latest image, try another one
-          # - platform: linux/arm64
-          #   dockerfile: Dockerfile.arm-neon
-          #   tag: nntbn:arm64
-          #   test: arm-neon
+          - platform: linux/arm64
+            dockerfile: Dockerfile.arm-neon
+            tag: nntbn:arm64
+            test: arm-neon
 
           - platform: linux/arm64
             dockerfile: Dockerfile.arm-cmsis-dsp
