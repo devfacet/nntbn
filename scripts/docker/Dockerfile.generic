@@ -7,7 +7,8 @@
 
 # Build
 FROM ubuntu:latest as build
-RUN apt-get update && apt-get install -y --no-install-recommends \
+#RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update \
     build-essential \
     clang \
     lld
