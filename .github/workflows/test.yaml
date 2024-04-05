@@ -40,20 +40,20 @@ jobs:
           #   tag: nntbn:generic-armv7
           #   test: generic
 
-          # - platform: linux/arm/v8
-          #   dockerfile: Dockerfile.generic
-          #   tag: nntbn:generic-armv8
-          #   test: generic
+          # - platform: linux/arm64
+          #   dockerfile: Dockerfile.arm-neon
+          #   tag: nntbn:arm64
+          #   test: arm-neon
 
-          - platform: linux/arm64
+          # - platform: linux/arm64
+          #   dockerfile: Dockerfile.arm-cmsis-dsp
+          #   tag: nntbn:arm64
+          #   test: arm-cmsis-dsp
+
+          - platform: linux/arm/v8
             dockerfile: Dockerfile.arm-neon
-            tag: nntbn:arm64
+            tag: nntbn:armv8-neon
             test: arm-neon
-
-          - platform: linux/arm64
-            dockerfile: Dockerfile.arm-cmsis-dsp
-            tag: nntbn:arm64
-            test: arm-cmsis-dsp
 
     steps:
       - name: Docker Setup QEMU
