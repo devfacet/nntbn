@@ -30,29 +30,24 @@ jobs:
     strategy:
       matrix:
         include:
-          # - platform: linux/amd64
-          #   dockerfile: Dockerfile.generic
-          #   tag: nntbn:amd64
-          #   test: generic
+          - platform: linux/amd64
+            dockerfile: Dockerfile.generic
+            tag: nntbn:amd64
+            test: generic
 
-          # - platform: linux/arm64
-          #   dockerfile: Dockerfile.arm-neon
-          #   tag: nntbn:arm64
-          #   test: arm-neon
+          - platform: linux/arm64
+            dockerfile: Dockerfile.arm-neon
+            tag: nntbn:arm64
+            test: arm-neon
 
-          # - platform: linux/arm64
-          #   dockerfile: Dockerfile.arm-cmsis-dsp
-          #   tag: nntbn:arm64
-          #   test: arm-cmsis-dsp
+          - platform: linux/arm64
+            dockerfile: Dockerfile.arm-cmsis-dsp
+            tag: nntbn:arm64
+            test: arm-cmsis-dsp
 
-          # - platform: linux/arm/v8
-          #   dockerfile: Dockerfile.armv8-neon
-          #   tag: nntbn:armv8-neon
-          #   test: arm-neon
-
-          - platform: linux/arm/v7
-            dockerfile: Dockerfile.armv7-neon
-            tag: nntbn:armv7-neon
+          - platform: linux/arm/v8
+            dockerfile: Dockerfile.armv8-neon
+            tag: nntbn:armv8-neon
             test: arm-neon
 
     steps:
