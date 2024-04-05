@@ -1,4 +1,4 @@
-#include "arch/arm/cmsis/nn_dot_product.h"
+#include "arch/arm/cmsis-dsp/nn_dot_product.h"
 #include "nn_activation.h"
 #include "nn_app.h"
 #include "nn_config.h"

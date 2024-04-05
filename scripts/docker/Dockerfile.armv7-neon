@@ -1,0 +1,28 @@
+# Example usage:
+# Build:
+#   docker buildx build --platform linux/arm/v7 -f scripts/docker/Dockerfile.armv7-neon -t nntbn:armv7-neon . --load
+# Run:
+#   docker run --rm -it --platform linux/arm/v7 nntbn:armv7-neon /nn/build/tests/arch/arm/neon/neuron
+#   docker run --rm -it --platform linux/arm/v7 nntbn:armv7-neon /nn/build/examples/arch/arm/neon/dot_product
+
+# Build
+FROM arm32v7/ubuntu:latest as build
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    clang \
+    lld \
+    gcc-arm-none-eabi \
+    libnewlib-arm-none-eabi
+COPY . /nn
+WORKDIR /nn
+RUN make build-examples ARCH=arm TECH=neon LDFLAGS="-lm" CFLAGS="-mfpu=neon-vfpv4"
+RUN make test ARCH=arm TECH=neon LDFLAGS="-lm" CFLAGS="-mfpu=neon-vfpv4"
+
+# Runtime
+FROM arm32v7/ubuntu:latest
+WORKDIR /nn
+COPY --from=build /nn /nn
+
+ENTRYPOINT ["/bin/bash", "-c"]
+CMD ["/bin/bash"]

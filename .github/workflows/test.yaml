@@ -30,37 +30,31 @@ jobs:
     strategy:
       matrix:
         include:
-          - platform: linux/arm64
-            dockerfile: Dockerfile.arm
-            tag: nntbn:arm64
-            test: arm
-
-          # No NEON support for armv7
-          # - platform: linux/arm/v7
-          #   dockerfile: Dockerfile.arm
-          #   tag: nntbn:armv7
-          #   test: arm
-
-          # No NEON support for armv8
-          # - platform: linux/arm/v8
-          #   dockerfile: Dockerfile.arm
-          #   tag: nntbn:armv8
-          #   test: arm
-
           - platform: linux/amd64
             dockerfile: Dockerfile.generic
             tag: nntbn:amd64
             test: generic
 
-          - platform: linux/arm/v7
-            dockerfile: Dockerfile.generic
-            tag: nntbn:generic-armv7
-            test: generic
+          - platform: linux/arm64
+            dockerfile: Dockerfile.arm-neon
+            tag: nntbn:arm64
+            test: arm-neon
+
+          - platform: linux/arm64
+            dockerfile: Dockerfile.arm-cmsis-dsp
+            tag: nntbn:arm64
+            test: arm-cmsis-dsp
 
           - platform: linux/arm/v8
-            dockerfile: Dockerfile.generic
-            tag: nntbn:generic-armv8
-            test: generic
+            dockerfile: Dockerfile.armv8-neon
+            tag: nntbn:armv8-neon
+            test: arm-neon
+
+          - platform: linux/arm/v7
+            dockerfile: Dockerfile.armv7-neon
+            tag: nntbn:armv7-neon
+            test: arm-neon
+
     steps:
       - name: Docker Setup QEMU
         uses: docker/setup-qemu-action@v3.0.0
@@ -84,9 +78,13 @@ jobs:
       - name: Build and Run Test
         run: |
           docker buildx build --platform ${{ matrix.platform }} -f scripts/docker/${{ matrix.dockerfile }} -t ${{ matrix.tag }} . --load
-          if [ "${{ matrix.test }}" == "arm" ]; then
-            docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} /nn/build/tests/arch/arm/cmsis/neuron
+          if [ "${{ matrix.test }}" == "arm-neon" ]; then
             docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} /nn/build/tests/arch/arm/neon/neuron
-          else
+          elif [ "${{ matrix.test }}" == "arm-cmsis-dsp" ]; then
+            docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} /nn/build/tests/arch/arm/cmsis-dsp/neuron
+          elif [ "${{ matrix.test }}" == "generic" ]; then
             docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} /nn/build/tests/arch/generic/neuron
+          else
+            echo "unknown test"
+            exit 1
           fi

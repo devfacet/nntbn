@@ -1,4 +1,4 @@
-#include "arch/arm/cmsis/nn_dot_product.h"
+#include "arch/arm/cmsis-dsp/nn_dot_product.h"
 #include "arm_math.h"
 #include "nn_debug.h"
 #include <stddef.h>

@@ -1,0 +1,28 @@
+# Example usage:
+# Build:
+#   docker buildx build --platform linux/arm64 -f scripts/docker/Dockerfile.arm-neon -t nntbn:arm-neon . --load
+# Run:
+#   docker run --rm -it --platform linux/arm64 nntbn:arm-neon /nn/build/tests/arch/arm/neon/neuron
+#   docker run --rm -it --platform linux/arm64 nntbn:arm-neon /nn/build/examples/arch/arm/neon/dot_product
+
+# Build
+FROM ubuntu:latest as build
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    clang \
+    lld \
+    gcc-arm-none-eabi \
+    libnewlib-arm-none-eabi
+COPY . /nn
+WORKDIR /nn
+RUN make build-examples ARCH=arm TECH=neon LDFLAGS="-lm"
+RUN make test ARCH=arm TECH=neon LDFLAGS="-lm"
+
+# Runtime
+FROM ubuntu:latest
+WORKDIR /nn
+COPY --from=build /nn /nn
+
+ENTRYPOINT ["/bin/bash", "-c"]
+CMD ["/bin/bash"]
