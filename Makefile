@@ -40,7 +40,7 @@ test:
 	@$(eval TECH_FILTER := $(if $(TECH),$(shell echo $(TECH) | tr ',' '|'),.*)) # Convert TECH to regex filter
 	@$(eval TESTS := $(shell find tests/arch/$(ARCH) -type f -name 'main.c' | grep -E "$(TECH_FILTER)" | sed 's|/main.c||' | sed 's|tests/||'))
 	@for test in $(TESTS); do \
-		$(MAKE) run-test ARCH=$(ARCH) TECH=$(TECH) TEST=$$test; \
+		$(MAKE) run-test ARCH=$(ARCH) TECH=$(TECH) TEST=$$test || exit 1; \
 	done
 
 ## build-example                       Build an example (e.g., make build-example ARCH=generic EXAMPLE=arch/generic/neuron)
@@ -53,7 +53,7 @@ build-examples:
 	@$(eval TECH_FILTER := $(if $(TECH),$(shell echo $(TECH) | tr ',' '|'),.*)) # Convert TECH to regex filter
 	@$(eval EXAMPLES := $(shell find examples/arch/$(ARCH) -type f -name 'main.c' | grep -E "$(TECH_FILTER)" | sed 's|/main.c||' | sed 's|examples/||'))
 	@for example in $(EXAMPLES); do \
-		$(MAKE) build-example ARCH=$(ARCH) TECH=$(TECH) EXAMPLE=$$example; \
+		$(MAKE) build-example ARCH=$(ARCH) TECH=$(TECH) EXAMPLE=$$example || exit 1; \
 	done
 
 ## run-example                         Run an examples (e.g., make run-example ARCH=generic EXAMPLE=arch/generic/neuron)
@@ -67,5 +67,5 @@ run-examples:
 	@$(eval TECH_FILTER := $(if $(TECH),$(shell echo $(TECH) | tr ',' '|'),.*)) # Convert TECH to regex filter
 	@$(eval EXAMPLES := $(shell find examples/arch/$(ARCH) -type f -name 'main.c' | grep -E "$(TECH_FILTER)" | sed 's|/main.c||' | sed 's|examples/||'))
 	@for example in $(EXAMPLES); do \
-		$(MAKE) run-example ARCH=$(ARCH) TECH=$(TECH) EXAMPLE=$$example; \
+		$(MAKE) run-example ARCH=$(ARCH) TECH=$(TECH) EXAMPLE=$$example || exit 1; \
 	done
