@@ -12,19 +12,21 @@
 #define NEURON_MAX_WEIGHTS 64
 #endif
 
-// Neuron represents a single neuron in a neural network.
+// NNNeuron represents a single neuron in a neural network.
+// It is intended for experimentation and prototyping, and not recommended for
+// real-world applications since it's not optimized for performance.
 typedef struct {
+    float weights[NEURON_MAX_WEIGHTS];
+    float bias;
+    size_t n_inputs;
     NNActivationFunction act_func;
     NNDotProductFunction dot_product_func;
-    float bias;
-    float weights[NEURON_MAX_WEIGHTS];
-    size_t n_inputs;
-} Neuron;
+} NNNeuron;
 
-// nn_init_neuron initializes a neuron with the given arguments.
-void nn_init_neuron(Neuron *neuron, const float *weights, size_t n_inputs, float bias, NNActivationFunction act_func, NNDotProductFunction dot_product_func);
+// nn_neuron_init initializes a neuron with the given arguments.
+void nn_neuron_init(NNNeuron *neuron, const float *weights, size_t n_inputs, float bias, NNActivationFunction act_func, NNDotProductFunction dot_product_func);
 
-// nn_compute_neuron computes the given neuron and returns the output.
-float nn_compute_neuron(const Neuron *neuron, const float *inputs, size_t input_size, NNError *error);
+// nn_neuron_compute computes the given neuron and returns the output.
+float nn_neuron_compute(const NNNeuron *neuron, const float *inputs);
 
 #endif // NN_NEURON_H

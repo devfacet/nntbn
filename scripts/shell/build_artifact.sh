@@ -52,11 +52,15 @@ for tech in "${TECHS[@]:-}"; do
     fi
 done
 
-#set -x
-$CC "${CFLAGS_ARRAY[@]}" \
+COMPILE_CMD=("$CC" "${CFLAGS_ARRAY[@]}" \
     -Iinclude/ \
     "${CC_PARTS[@]:-}" \
     src/*.c \
     "$(pwd)/$ARTIFACT"/main.c \
-    -o "$(pwd)/build/$ARTIFACT" "${LDFLAGS_ARRAY[@]}"
-#set +x
+    -o "$(pwd)/build/$ARTIFACT")
+
+if [ ${#LDFLAGS_ARRAY[@]} -ne 0 ]; then
+    COMPILE_CMD+=("${LDFLAGS_ARRAY[@]}")
+fi
+# echo "${COMPILE_CMD[@]}"
+"${COMPILE_CMD[@]}"
