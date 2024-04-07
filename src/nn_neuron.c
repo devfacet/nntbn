@@ -5,15 +5,15 @@
 #include <math.h>
 #include <stdio.h>
 
-// nn_init_neuron initializes a neuron with the given arguments.
-void nn_init_neuron(Neuron *neuron, const float *weights, size_t n_inputs, float bias, NNActivationFunction act_func, NNDotProductFunction dot_product_func) {
+// nn_neuron_init initializes a neuron with the given arguments.
+void nn_neuron_init(NNNeuron *neuron, const float *weights, size_t n_inputs, float bias, NNActivationFunction act_func, NNDotProductFunction dot_product_func) {
     if (weights == NULL) {
         return;
     }
-    for (size_t i = 0; i < n_inputs; ++i) {
+    neuron->n_inputs = n_inputs;
+    for (size_t i = 0; i < neuron->n_inputs; ++i) {
         neuron->weights[i] = weights[i];
     }
-    neuron->n_inputs = n_inputs;
     neuron->bias = bias;
     if (act_func != NULL) {
         neuron->act_func = act_func;
@@ -23,22 +23,8 @@ void nn_init_neuron(Neuron *neuron, const float *weights, size_t n_inputs, float
     }
 }
 
-// nn_compute_neuron computes the given neuron and returns the output.
-float nn_compute_neuron(const Neuron *neuron, const float *inputs, size_t input_size, NNError *error) {
-    if (error) {
-        error->code = NN_ERROR_NONE;
-        error->message = NULL;
-    }
-
-    // Check if the number of inputs matches the expected number of inputs for the neuron
-    if (neuron->n_inputs != input_size) {
-        if (error) {
-            error->code = NN_ERROR_INVALID_INPUT_SIZE;
-            error->message = "invalid input size";
-        }
-        return NAN;
-    }
-
+// nn_neuron_compute computes the given neuron and returns the output.
+float nn_neuron_compute(const NNNeuron *neuron, const float *inputs) {
     // Compute the output of the neuron:
     // 1. Sum the weighted inputs (dot product)
     // 2. Add the bias

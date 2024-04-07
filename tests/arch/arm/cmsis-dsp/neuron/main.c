@@ -26,13 +26,11 @@ typedef struct {
 void run_test_cases(TestCase *test_cases, int n_cases, char *info, NNDotProductFunction dot_product_func) {
     for (int i = 0; i < n_cases; ++i) {
         TestCase tc = test_cases[i];
-        Neuron neuron;
-        NNError error;
+        NNNeuron neuron;
 
-        nn_init_neuron(&neuron, tc.weights, tc.n_inputs, tc.bias, nn_activation_func_identity, dot_product_func);
-        const float output = nn_compute_neuron(&neuron, tc.inputs, tc.n_inputs, &error);
+        nn_neuron_init(&neuron, tc.weights, tc.n_inputs, tc.bias, nn_activation_func_identity, dot_product_func);
+        const float output = nn_neuron_compute(&neuron, tc.inputs);
         assert(isnan(output) == false);
-        assert(error.code == NN_ERROR_NONE);
         assert(fabs(output - tc.expected_output) < tc.output_tolerance);
         printf("passed: %s case=%d info=%s\n", __func__, i + 1, info);
     }
