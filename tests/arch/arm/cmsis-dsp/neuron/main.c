@@ -27,9 +27,12 @@ void run_test_cases(TestCase *test_cases, int n_cases, char *info, NNDotProductF
     for (int i = 0; i < n_cases; ++i) {
         TestCase tc = test_cases[i];
         NNNeuron neuron;
+        NNError error;
 
-        nn_neuron_init(&neuron, tc.weights, tc.n_weights, tc.bias, nn_activation_func_identity, dot_product_func);
-        const float output = nn_neuron_compute(&neuron, tc.inputs);
+        nn_neuron_init(&neuron, tc.weights, tc.n_weights, tc.bias, nn_activation_func_identity, dot_product_func, &error);
+        assert(error.code == NN_ERROR_NONE);
+        const float output = nn_neuron_compute(&neuron, tc.inputs, &error);
+        assert(error.code == NN_ERROR_NONE);
         assert(isnan(output) == false);
         assert(fabs(output - tc.expected_output) < tc.output_tolerance);
         printf("passed: %s case=%d info=%s\n", __func__, i + 1, info);
