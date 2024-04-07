@@ -6,12 +6,12 @@
 #include <stdio.h>
 
 // nn_neuron_init initializes a neuron with the given arguments.
-void nn_neuron_init(NNNeuron *neuron, const float *weights, size_t n_inputs, float bias, NNActivationFunction act_func, NNDotProductFunction dot_product_func) {
+void nn_neuron_init(NNNeuron *neuron, const float *weights, size_t n_weights, float bias, NNActivationFunction act_func, NNDotProductFunction dot_product_func) {
     if (weights == NULL) {
         return;
     }
-    neuron->n_inputs = n_inputs;
-    for (size_t i = 0; i < neuron->n_inputs; ++i) {
+    neuron->n_weights = n_weights;
+    for (size_t i = 0; i < neuron->n_weights; ++i) {
         neuron->weights[i] = weights[i];
     }
     neuron->bias = bias;
@@ -23,6 +23,21 @@ void nn_neuron_init(NNNeuron *neuron, const float *weights, size_t n_inputs, flo
     }
 }
 
+// nn_neuron_set_weights sets the weights of the given neuron.
+void nn_neuron_set_weights(NNNeuron *neuron, const float *weights) {
+    if (weights == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < neuron->n_weights; ++i) {
+        neuron->weights[i] = weights[i];
+    }
+}
+
+// nn_neuron_set_bias sets the bias of the given neuron.
+void nn_neuron_set_bias(NNNeuron *neuron, float bias) {
+    neuron->bias = bias;
+}
+
 // nn_neuron_compute computes the given neuron and returns the output.
 float nn_neuron_compute(const NNNeuron *neuron, const float *inputs) {
     // Compute the output of the neuron:
@@ -32,7 +47,7 @@ float nn_neuron_compute(const NNNeuron *neuron, const float *inputs) {
     float result = 0.0f;
     if (neuron->dot_product_func != NULL) {
         // Sum the weighted inputs
-        result = neuron->dot_product_func(neuron->weights, inputs, neuron->n_inputs);
+        result = neuron->dot_product_func(neuron->weights, inputs, neuron->n_weights);
     }
     // Add the bias
     result += neuron->bias;

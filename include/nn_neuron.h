@@ -17,14 +17,20 @@
 // real-world applications since it's not optimized for performance.
 typedef struct {
     float weights[NEURON_MAX_WEIGHTS];
+    size_t n_weights;
     float bias;
-    size_t n_inputs;
     NNActivationFunction act_func;
     NNDotProductFunction dot_product_func;
 } NNNeuron;
 
 // nn_neuron_init initializes a neuron with the given arguments.
-void nn_neuron_init(NNNeuron *neuron, const float *weights, size_t n_inputs, float bias, NNActivationFunction act_func, NNDotProductFunction dot_product_func);
+void nn_neuron_init(NNNeuron *neuron, const float *weights, size_t n_weights, float bias, NNActivationFunction act_func, NNDotProductFunction dot_product_func);
+
+// nn_neuron_set_weights sets the weights of the given neuron.
+void nn_neuron_set_weights(NNNeuron *neuron, const float *weights);
+
+// nn_neuron_set_bias sets the bias of the given neuron.
+void nn_neuron_set_bias(NNNeuron *neuron, float bias);
 
 // nn_neuron_compute computes the given neuron and returns the output.
 float nn_neuron_compute(const NNNeuron *neuron, const float *inputs);
