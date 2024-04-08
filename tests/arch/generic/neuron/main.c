@@ -14,7 +14,7 @@
 typedef struct {
     float inputs[NEURON_MAX_WEIGHTS];
     float weights[NEURON_MAX_WEIGHTS];
-    int n_weights;
+    size_t input_size;
     float bias;
     NNDotProductFunction dot_product_func;
     float output_tolerance;
@@ -28,7 +28,7 @@ void run_test_cases(TestCase *test_cases, int n_cases, char *info, NNDotProductF
         NNNeuron neuron;
         NNError error;
 
-        nn_neuron_init(&neuron, tc.weights, tc.n_weights, tc.bias, nn_activation_func_identity, dot_product_func, &error);
+        nn_neuron_init(&neuron, tc.weights, tc.input_size, tc.bias, nn_activation_func_identity, dot_product_func, &error);
         assert(error.code == NN_ERROR_NONE);
         const float output = nn_neuron_compute(&neuron, tc.inputs, &error);
         assert(error.code == NN_ERROR_NONE);
@@ -43,7 +43,7 @@ int main() {
         {
             .inputs = {0.5f, 1.2f, -0.8f},
             .weights = {0.2f, 0.3f, -0.1f},
-            .n_weights = 3,
+            .input_size = 3,
             .bias = 0.5f,
             .output_tolerance = DEFAULT_OUTPUT_TOLERANCE,
             .expected_output = 1.04f,
@@ -52,7 +52,7 @@ int main() {
         {
             .inputs = {-0.6f, -1.1f, 0.9f},
             .weights = {-0.2f, 0.5f, 0.3f},
-            .n_weights = 3,
+            .input_size = 3,
             .bias = -0.5f,
             .output_tolerance = DEFAULT_OUTPUT_TOLERANCE,
             .expected_output = -0.66f,
@@ -61,7 +61,7 @@ int main() {
         {
             .inputs = {1.5f, 2.0f, -1.0f},
             .weights = {0.4f, 0.4f, -0.2f},
-            .n_weights = 3,
+            .input_size = 3,
             .bias = 2.0f,
             .output_tolerance = DEFAULT_OUTPUT_TOLERANCE,
             .expected_output = 3.6f,
@@ -70,7 +70,7 @@ int main() {
         {
             .inputs = {0.1f, -0.2f, 0.3f},
             .weights = {0.3f, -0.2f, 0.1f},
-            .n_weights = 3,
+            .input_size = 3,
             .bias = 0.05f,
             .output_tolerance = DEFAULT_OUTPUT_TOLERANCE,
             .expected_output = 0.15f,
@@ -79,7 +79,7 @@ int main() {
         {
             .inputs = {-2.5f, 3.0f, -1.5f},
             .weights = {0.5f, -0.5f, 0.75f},
-            .n_weights = 3,
+            .input_size = 3,
             .bias = 1.0f,
             .output_tolerance = DEFAULT_OUTPUT_TOLERANCE,
             .expected_output = -2.875f,
@@ -88,7 +88,7 @@ int main() {
         {
             .inputs = {0.0f, 0.0f, 0.0f},
             .weights = {0.25f, -0.75f, 0.5f},
-            .n_weights = 3,
+            .input_size = 3,
             .bias = 0.5f,
             .output_tolerance = DEFAULT_OUTPUT_TOLERANCE,
             .expected_output = 0.5f,
@@ -97,7 +97,7 @@ int main() {
         {
             .inputs = {1.2f, -1.2f, 0.8f},
             .weights = {0.0f, 0.0f, 0.0f},
-            .n_weights = 3,
+            .input_size = 3,
             .bias = 0.25f,
             .output_tolerance = DEFAULT_OUTPUT_TOLERANCE,
             .expected_output = 0.25f,
@@ -106,7 +106,7 @@ int main() {
         {
             .inputs = {1.0f, -1.0f, 1.0f},
             .weights = {-1.0f, 1.0f, -1.0f},
-            .n_weights = 3,
+            .input_size = 3,
             .bias = -0.5f,
             .output_tolerance = DEFAULT_OUTPUT_TOLERANCE,
             .expected_output = -3.5f,
@@ -115,7 +115,7 @@ int main() {
         {
             .inputs = {0.123f, 0.456f, -0.789f},
             .weights = {0.321f, -0.654f, 0.987f},
-            .n_weights = 3,
+            .input_size = 3,
             .bias = 0.1f,
             .output_tolerance = DEFAULT_OUTPUT_TOLERANCE,
             .expected_output = -0.937484,
@@ -124,7 +124,7 @@ int main() {
         {
             .inputs = {0.001f, -0.002f, 0.003f},
             .weights = {0.004f, 0.005f, -0.006f},
-            .n_weights = 3,
+            .input_size = 3,
             .bias = 0.0f,
             .output_tolerance = DEFAULT_OUTPUT_TOLERANCE,
             .expected_output = 0.000012f,
