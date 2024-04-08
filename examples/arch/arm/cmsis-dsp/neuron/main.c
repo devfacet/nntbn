@@ -16,13 +16,13 @@ int main(int argc, char *argv[]) {
     // Init vars
     NNNeuron neuron;
     NNError error;
+    size_t input_size = 3;
     float inputs[NEURON_MAX_WEIGHTS] = {1, 2, 3};
     float weights[NEURON_MAX_WEIGHTS] = {0.2f, 0.8f, -0.5f};
-    int n_weights = 3;
     float bias = 2.0f;
 
     // Compute the output
-    if (!nn_neuron_init(&neuron, weights, n_weights, bias, nn_activation_func_identity, nn_dot_product_cmsis, &error)) {
+    if (!nn_neuron_init(&neuron, weights, input_size, bias, nn_activation_func_identity, nn_dot_product_cmsis, &error)) {
         printf("error: %s\n", error.message);
         return 1;
     }
