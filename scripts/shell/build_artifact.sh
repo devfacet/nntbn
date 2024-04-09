@@ -7,7 +7,7 @@ ARCH="${ARCH-}"
 TECH="${TECH-}"
 ARTIFACT="${ARTIFACT-}"
 CC="${CC:-clang}"
-CFLAGS_ARRAY=(-Wall -fdiagnostics-color=always)
+CFLAGS_ARRAY=(-Wall -fdiagnostics-color=always -std=c99)
 
 # Check and add CFLAGS to CFLAGS_ARRAY
 if [ -n "${CFLAGS-}" ]; then
