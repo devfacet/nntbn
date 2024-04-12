@@ -1,4 +1,5 @@
 #include "nn_test.h"
+#include <time.h>
 
 // nn_timespec_diff_ns returns the difference between two timespec structs in nanoseconds.
 long long nn_timespec_diff_ns(struct timespec *start, struct timespec *end) {
