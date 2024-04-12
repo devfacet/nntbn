@@ -1,3 +1,4 @@
+#define _POSIX_C_SOURCE 199309L
 #include "nn_activation.h"
 #include "nn_app.h"
 #include "nn_config.h"
