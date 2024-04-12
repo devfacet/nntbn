@@ -1,4 +1,3 @@
-#define _POSIX_C_SOURCE 199309L
 #include "arch/arm/cmsis-dsp/nn_dot_product.h"
 #include "nn_app.h"
 #include "nn_config.h"
