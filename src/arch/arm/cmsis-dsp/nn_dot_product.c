@@ -4,7 +4,7 @@
 #include <stddef.h>
 
 // nn_dot_product_neon calculates the dot product of two vectors.
-float nn_dot_product_cmsis(const float *a, const float *b, size_t vector_size) {
+float nn_dot_product_cmsis(const float a[NN_DOT_PRODUCT_MAX_VECTOR_SIZE], const float b[NN_DOT_PRODUCT_MAX_VECTOR_SIZE], size_t vector_size) {
     NN_DEBUG_PRINT(5, "function %s called with vector_size = %zu\n", __func__, vector_size);
 
     float result = 0.0f;
