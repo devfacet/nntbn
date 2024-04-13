@@ -93,4 +93,5 @@ jobs:
           for TEST in "${TESTS[@]}"; do
             echo "running ${TEST}"
             docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} "/nn/build/tests/${TEST}"
+            echo " "
           done
