@@ -156,6 +156,6 @@ int main() {
         },
     };
 
-    run_test_cases(test_cases, N_TEST_CASES, "nn_layer.multi");
+    run_test_cases(test_cases, N_TEST_CASES, "nn_layer");
     return 0;
 }
