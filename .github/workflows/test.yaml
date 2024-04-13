@@ -80,12 +80,16 @@ jobs:
         run: |
           docker buildx build --platform ${{ matrix.platform }} -f scripts/docker/${{ matrix.dockerfile }} -t ${{ matrix.tag }} . --load
           if [ "${{ matrix.test }}" == "arm-neon" ]; then
-            docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} /nn/build/tests/arch/arm/neon/neuron
+            TESTS=arch/arm/neon/dot_product_perf,arch/arm/neon/neuron,arch/arm/neon/neuron_perf
           elif [ "${{ matrix.test }}" == "arm-cmsis-dsp" ]; then
-            docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} /nn/build/tests/arch/arm/cmsis-dsp/neuron
+            TESTS=arch/arm/cmsis-dsp/dot_product_perf,arch/arm/cmsis-dsp/neuron,arch/arm/cmsis-dsp/neuron_perf
           elif [ "${{ matrix.test }}" == "generic" ]; then
-            docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} /nn/build/tests/arch/generic/neuron
+            TESTS=arch/generic/dot_product,arch/generic/dot_product_perf,arch/generic/layer,arch/generic/neuron,arch/generic/neuron_perf
           else
             echo "unknown test"
             exit 1
           fi
+          IFS=',' read -ra TESTS <<< "$TESTS"
+          for TEST in "${TESTS[@]}"; do
+            docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} "/nn/build/tests/${TEST}"
+          done

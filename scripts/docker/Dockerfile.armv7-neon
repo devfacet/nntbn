@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY . /nn
 WORKDIR /nn
 RUN make build-examples ARCH=arm TECH=neon LDFLAGS="-lm" CFLAGS="-mfpu=neon-vfpv4"
-RUN make test ARCH=arm TECH=neon LDFLAGS="-lm" CFLAGS="-mfpu=neon-vfpv4"
+RUN make build-tests ARCH=arm TECH=neon LDFLAGS="-lm" CFLAGS="-mfpu=neon-vfpv4"
 
 # Runtime
 FROM arm32v7/ubuntu:latest

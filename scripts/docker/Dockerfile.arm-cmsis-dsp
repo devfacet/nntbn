@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY . /nn
 WORKDIR /nn
 RUN make build-examples ARCH=arm TECH=cmsis-dsp LDFLAGS="-lm"
-RUN make test ARCH=arm TECH=cmsis-dsp LDFLAGS="-lm"
+RUN make build-tests ARCH=arm TECH=cmsis-dsp LDFLAGS="-lm"
 
 # Runtime
 FROM ubuntu:latest

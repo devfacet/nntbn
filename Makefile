@@ -27,21 +27,33 @@ clean:
 		echo "build directory does not exist, skipping"; \
 	fi
 
-## run-test                            Run a test (e.g., make run-test ARCH=generic TEST=arch/generic/neuron)
-run-test:
-	@echo building $(TEST)
-	@ARCH=$(ARCH) TECH=$(TECH) ARTIFACT=tests/$(TEST) scripts/shell/build_artifact.sh
-	@echo running $(TEST)
-	@ARCH=$(ARCH) TECH=$(TECH) ARTIFACT=tests/$(TEST) ARGS="$(ARGS)" scripts/shell/run_artifact.sh
-	@echo " "
-
 ## test                                Run tests (e.g., make test ARCH=generic)
 test:
-	@$(eval TECH_FILTER := $(if $(TECH),$(shell echo $(TECH) | tr ',' '|'),.*))
+	@$(MAKE) build-tests ARCH=$(ARCH) TECH=$(TECH)
+	@echo " "
 	@$(eval TESTS := $(shell find tests/arch/$(ARCH) -type f -name 'main.c' | grep -E "$(TECH_FILTER)" | sed 's|/main.c||' | sed 's|tests/||'))
 	@for test in $(TESTS); do \
 		$(MAKE) run-test ARCH=$(ARCH) TECH=$(TECH) TEST=$$test || exit 1; \
 	done
+
+## build-test                          Build a test (e.g., make build-test ARCH=generic TEST=arch/generic/neuron)
+build-test:
+	@echo building $(TEST)
+	@ARCH=$(ARCH) TECH=$(TECH) ARTIFACT=tests/$(TEST) scripts/shell/build_artifact.sh
+
+## build-tests                         Build tests (e.g., make build-tests ARCH=generic)
+build-tests:
+	@$(eval TECH_FILTER := $(if $(TECH),$(shell echo $(TECH) | tr ',' '|'),.*))
+	@$(eval TESTS := $(shell find tests/arch/$(ARCH) -type f -name 'main.c' | grep -E "$(TECH_FILTER)" | sed 's|/main.c||' | sed 's|tests/||'))
+	@for test in $(TESTS); do \
+		$(MAKE) build-test ARCH=$(ARCH) TECH=$(TECH) TEST=$$test || exit 1; \
+	done
+
+## run-test                            Run a test (e.g., make run-test ARCH=generic TEST=arch/generic/neuron)
+run-test:
+	@echo running $(TEST)
+	@ARCH=$(ARCH) TECH=$(TECH) ARTIFACT=tests/$(TEST) ARGS="$(ARGS)" scripts/shell/run_artifact.sh
+	@echo " "
 
 ## build-example                       Build an example (e.g., make build-example ARCH=generic EXAMPLE=arch/generic/neuron)
 build-example:
