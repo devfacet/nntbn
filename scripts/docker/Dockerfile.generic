@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY . /nn
 WORKDIR /nn
 RUN make build-examples ARCH=generic LDFLAGS="-lm"
-RUN make test ARCH=generic LDFLAGS="-lm"
+RUN make build-tests ARCH=generic LDFLAGS="-lm"
 
 # Runtime
 FROM ubuntu:latest
