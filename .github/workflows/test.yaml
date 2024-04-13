@@ -76,10 +76,14 @@ jobs:
           docker buildx create --name tests --use
           docker buildx inspect --bootstrap
 
-      - name: Build and Run Tests
+      - name: Build images
         run: |
           docker images
           docker buildx build --platform ${{ matrix.platform }} -f scripts/docker/${{ matrix.dockerfile }} -t ${{ matrix.tag }} . --load
+          docker images
+
+      - name: Test
+        run: |
           if [ "${{ matrix.test }}" == "arm-neon" ]; then
             TESTS=arch/arm/neon/dot_product_perf,arch/arm/neon/neuron,arch/arm/neon/neuron_perf
           elif [ "${{ matrix.test }}" == "arm-cmsis-dsp" ]; then
