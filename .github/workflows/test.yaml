@@ -84,7 +84,7 @@ jobs:
           elif [ "${{ matrix.test }}" == "arm-cmsis-dsp" ]; then
             TESTS=arch/arm/cmsis-dsp/dot_product_perf,arch/arm/cmsis-dsp/neuron,arch/arm/cmsis-dsp/neuron_perf
           elif [ "${{ matrix.test }}" == "generic" ]; then
-            TESTS=arch/arm/generic/dot_product,arch/arm/generic/dot_product_perf,arch/arm/generic/layer,arch/arm/generic/neuron,arch/arm/generic/neuron_perf
+            TESTS=arch/generic/dot_product,arch/generic/dot_product_perf,arch/generic/layer,arch/generic/neuron,arch/generic/neuron_perf
           else
             echo "unknown test"
             exit 1
