@@ -76,7 +76,7 @@ jobs:
           docker buildx create --name tests --use
           docker buildx inspect --bootstrap
 
-      - name: Build base image
+      - name: Build image for cache
         run: |
           if [ "${{ matrix.test }}" == "arm-neon" ] || [ "${{ matrix.test }}" == "arm-cmsis-dsp" ]; then
             docker buildx build --platform ${{ matrix.platform }} -f scripts/docker/Dockerfile.arm -t nntbn:arm . --load
@@ -87,13 +87,10 @@ jobs:
             exit 1
           fi
 
-      - name: Build test image
+      - name: Build and Run Tests
         run: |
           docker images
           docker buildx build --platform ${{ matrix.platform }} -f scripts/docker/${{ matrix.dockerfile }} -t ${{ matrix.tag }} . --load
-
-      - name: Run tests
-        run: |
           if [ "${{ matrix.test }}" == "arm-neon" ]; then
             TESTS=arch/arm/neon/dot_product_perf,arch/arm/neon/neuron,arch/arm/neon/neuron_perf
           elif [ "${{ matrix.test }}" == "arm-cmsis-dsp" ]; then
