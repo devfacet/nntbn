@@ -76,17 +76,6 @@ jobs:
           docker buildx create --name tests --use
           docker buildx inspect --bootstrap
 
-      - name: Build image for cache
-        run: |
-          if [ "${{ matrix.test }}" == "arm-neon" ] || [ "${{ matrix.test }}" == "arm-cmsis-dsp" ]; then
-            docker buildx build --platform ${{ matrix.platform }} -f scripts/docker/Dockerfile.arm -t nntbn:arm . --load
-          elif [ "${{ matrix.test }}" == "amd64-generic" ]; then
-            docker buildx build --platform ${{ matrix.platform }} -f scripts/docker/Dockerfile.amd64 -t nntbn:amd64 . --load
-          else
-            echo "unknown test"
-            exit 1
-          fi
-
       - name: Build and Run Tests
         run: |
           docker images
@@ -95,7 +84,7 @@ jobs:
             TESTS=arch/arm/neon/dot_product_perf,arch/arm/neon/neuron,arch/arm/neon/neuron_perf
           elif [ "${{ matrix.test }}" == "arm-cmsis-dsp" ]; then
             TESTS=arch/arm/cmsis-dsp/dot_product_perf,arch/arm/cmsis-dsp/neuron,arch/arm/cmsis-dsp/neuron_perf
-          elif [ "${{ matrix.test }}" == "generic" ]; then
+          elif [ "${{ matrix.test }}" == "amd64-generic" ]; then
             TESTS=arch/generic/dot_product,arch/generic/dot_product_perf,arch/generic/layer,arch/generic/layer_multi,arch/generic/neuron,arch/generic/neuron_perf
           else
             echo "unknown test"
