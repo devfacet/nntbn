@@ -55,7 +55,7 @@ run-test:
 	@ARCH=$(ARCH) TECH=$(TECH) ARTIFACT=tests/$(TEST) ARGS="$(ARGS)" scripts/shell/run_artifact.sh
 	@echo " "
 
-## build-example                       Build an example (e.g., make build-example ARCH=generic EXAMPLE=arch/generic/neuron)
+## build-example                       Build an example (e.g., make build-example ARCH=generic EXAMPLE=arch/generic/layer)
 build-example:
 	@echo building $(EXAMPLE)
 	@ARCH=$(ARCH) TECH=$(TECH) ARTIFACT=examples/$(EXAMPLE) scripts/shell/build_artifact.sh
@@ -68,7 +68,7 @@ build-examples:
 		$(MAKE) build-example ARCH=$(ARCH) TECH=$(TECH) EXAMPLE=$$example || exit 1; \
 	done
 
-## run-example                         Run an examples (e.g., make run-example ARCH=generic EXAMPLE=arch/generic/neuron)
+## run-example                         Run an examples (e.g., make run-example ARCH=generic EXAMPLE=arch/generic/layer)
 run-example:
 	@echo running $(EXAMPLE) $(ARGS)
 	@ARCH=$(ARCH) ARTIFACT=examples/$(EXAMPLE) ARGS="$(ARGS)" scripts/shell/run_artifact.sh

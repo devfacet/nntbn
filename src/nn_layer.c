@@ -1,7 +1,14 @@
 #include "nn_layer.h"
+#include <math.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <stdlib.h>
+
+// M_PI is not defined in some compilers.
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 // nn_layer_init initializes a layer with the given arguments.
 bool nn_layer_init(NNLayer *layer, size_t input_size, size_t output_size, NNActivationFunction act_func, NNDotProductFunction dot_product_func, NNError *error) {
@@ -26,6 +33,44 @@ bool nn_layer_init(NNLayer *layer, size_t input_size, size_t output_size, NNActi
     if (dot_product_func) {
         layer->dot_product_func = dot_product_func;
     }
+
+    return true;
+}
+
+// nn_layer_init_weights_gaussian initializes the weights of the layer with a Gaussian distribution.
+bool nn_layer_init_weights_gaussian(NNLayer *layer, float scale, NNError *error) {
+    nn_error_set(error, NN_ERROR_NONE, NULL);
+    if (layer == NULL) {
+        nn_error_set(error, NN_ERROR_INVALID_INSTANCE, "layer is NULL");
+        return false;
+    }
+
+    // Initialize weights with Gaussian random values scaled by 'scale'
+    for (size_t i = 0; i < layer->output_size; ++i) {
+        for (size_t j = 0; j < layer->input_size; ++j) {
+            float u1 = (float)rand() / (float)RAND_MAX;
+            float u2 = (float)rand() / (float)RAND_MAX;
+            float rand_std_normal = sqrt(-2.0 * log(u1)) * cos(2.0 * M_PI * u2); // Box-Muller transform
+            layer->weights[i][j] = scale * rand_std_normal;
+        }
+    }
+
+    return true;
+}
+
+// nn_layer_init_biases_zeros initializes the biases of the layer to zero.
+bool nn_layer_init_biases_zeros(NNLayer *layer, NNError *error) {
+    nn_error_set(error, NN_ERROR_NONE, NULL);
+    if (layer == NULL) {
+        nn_error_set(error, NN_ERROR_INVALID_INSTANCE, "layer is NULL");
+        return false;
+    }
+
+    // Initialize biases to zero
+    for (size_t i = 0; i < layer->output_size; ++i) {
+        layer->biases[i] = 0.0;
+    }
+
     return true;
 }
 
@@ -41,6 +86,7 @@ bool nn_layer_set_weights(NNLayer *layer, const float weights[NN_LAYER_MAX_OUTPU
             layer->weights[i][j] = weights[i][j];
         }
     }
+
     return true;
 }
 
@@ -54,6 +100,7 @@ bool nn_layer_set_biases(NNLayer *layer, const float biases[NN_LAYER_MAX_BIASES]
     for (size_t i = 0; i < layer->output_size; ++i) {
         layer->biases[i] = biases[i];
     }
+
     return true;
 }
 
@@ -81,5 +128,6 @@ bool nn_layer_forward(const NNLayer *layer, const float inputs[NN_LAYER_MAX_BATC
             }
         }
     }
+
     return true;
 }
