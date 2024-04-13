@@ -3,7 +3,6 @@
 #   docker buildx build --platform linux/arm/v8 -f scripts/docker/Dockerfile.armv8-neon -t nntbn:armv8-neon . --load
 # Run:
 #   docker run --rm -it --platform linux/arm/v8 nntbn:armv8-neon /nn/build/tests/arch/arm/neon/neuron
-#   docker run --rm -it --platform linux/arm/v8 nntbn:armv8-neon /nn/build/examples/arch/arm/neon/dot_product
 
 # Build
 FROM arm64v8/ubuntu:latest as build
@@ -16,7 +15,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libnewlib-arm-none-eabi
 COPY . /nn
 WORKDIR /nn
-RUN make build-examples ARCH=arm TECH=neon LDFLAGS="-lm"
 RUN make build-tests ARCH=arm TECH=neon LDFLAGS="-lm"
 
 # Runtime

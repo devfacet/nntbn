@@ -31,6 +31,7 @@ clean:
 test:
 	@$(MAKE) build-tests ARCH=$(ARCH) TECH=$(TECH)
 	@echo " "
+	@$(eval TECH_FILTER := $(if $(TECH),$(shell echo $(TECH) | tr ',' '|'),.*))
 	@$(eval TESTS := $(shell find tests/arch/$(ARCH) -type f -name 'main.c' | grep -E "$(TECH_FILTER)" | sed 's|/main.c||' | sed 's|tests/||'))
 	@for test in $(TESTS); do \
 		$(MAKE) run-test ARCH=$(ARCH) TECH=$(TECH) TEST=$$test || exit 1; \
