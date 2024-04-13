@@ -45,7 +45,6 @@ void run_test_cases(TestCase *test_cases, int n_cases, char *info) {
         assert(error.code == NN_ERROR_NONE);
         for (size_t i = 0; i < tc.batch_size; ++i) {
             for (size_t j = 0; j < tc.output_size; ++j) {
-                // printf("outputs[%zu][%zu]=%f\n", i, j, outputs[i][j]);
                 assert(fabs(outputs[i][j] - tc.expected_outputs[i][j]) <= tc.output_tolerance);
             }
         }
