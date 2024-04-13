@@ -13,8 +13,8 @@
 
 // TestCase defines a single test case.
 typedef struct {
-    float inputs[NEURON_MAX_WEIGHTS];
-    float weights[NEURON_MAX_WEIGHTS];
+    float inputs[NN_NEURON_MAX_WEIGHTS];
+    float weights[NN_NEURON_MAX_WEIGHTS];
     size_t input_size;
     float bias;
     NNDotProductFunction dot_product_func;

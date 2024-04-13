@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
     NNNeuron neuron;
     NNError error;
     size_t input_size = 3;
-    float weights[NEURON_MAX_WEIGHTS] = {0.2f, 0.8f, -0.5f};
+    float weights[NN_NEURON_MAX_WEIGHTS] = {0.2f, 0.8f, -0.5f};
     float bias = 2.0f;
     const int n_runs = 1000;
     const int n_inputs = n_runs * input_size;

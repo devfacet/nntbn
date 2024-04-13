@@ -30,7 +30,7 @@ bool nn_layer_init(NNLayer *layer, size_t input_size, size_t output_size, NNActi
 }
 
 // nn_layer_set_weights sets the weights of the given layer.
-bool nn_layer_set_weights(NNLayer *layer, const float weights[LAYER_MAX_OUTPUT_SIZE][LAYER_MAX_INPUT_SIZE], NNError *error) {
+bool nn_layer_set_weights(NNLayer *layer, const float weights[NN_LAYER_MAX_OUTPUT_SIZE][NN_LAYER_MAX_INPUT_SIZE], NNError *error) {
     nn_error_set(error, NN_ERROR_NONE, NULL);
     if (layer == NULL) {
         nn_error_set(error, NN_ERROR_INVALID_INSTANCE, "layer is NULL");
@@ -45,7 +45,7 @@ bool nn_layer_set_weights(NNLayer *layer, const float weights[LAYER_MAX_OUTPUT_S
 }
 
 // nn_layer_set_biases sets the biases of the given layer.
-bool nn_layer_set_biases(NNLayer *layer, const float biases[LAYER_MAX_BIASES], NNError *error) {
+bool nn_layer_set_biases(NNLayer *layer, const float biases[NN_LAYER_MAX_BIASES], NNError *error) {
     nn_error_set(error, NN_ERROR_NONE, NULL);
     if (layer == NULL) {
         nn_error_set(error, NN_ERROR_INVALID_INSTANCE, "layer is NULL");
@@ -58,7 +58,7 @@ bool nn_layer_set_biases(NNLayer *layer, const float biases[LAYER_MAX_BIASES], N
 }
 
 // nn_layer_compute computes the given layer with the given inputs and stores the result in outputs.
-bool nn_layer_compute(const NNLayer *layer, const float inputs[LAYER_MAX_BATCH_SIZE][LAYER_MAX_INPUT_SIZE], float outputs[LAYER_MAX_BATCH_SIZE][LAYER_MAX_OUTPUT_SIZE], size_t batch_size, NNError *error) {
+bool nn_layer_compute(const NNLayer *layer, const float inputs[NN_LAYER_MAX_BATCH_SIZE][NN_LAYER_MAX_INPUT_SIZE], float outputs[NN_LAYER_MAX_BATCH_SIZE][NN_LAYER_MAX_OUTPUT_SIZE], size_t batch_size, NNError *error) {
     nn_error_set(error, NN_ERROR_NONE, NULL);
     if (layer == NULL) {
         nn_error_set(error, NN_ERROR_INVALID_INSTANCE, "layer is NULL");
