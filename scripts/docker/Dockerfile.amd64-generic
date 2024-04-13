@@ -1,0 +1,2 @@
+FROM nntbn:amd64
+RUN make build-tests ARCH=generic LDFLAGS="-lm"

@@ -1,0 +1,19 @@
+# Example usage:
+# Build:
+#   docker buildx build --platform linux/arm64 -f scripts/docker/Dockerfile.arm -t nntbn:arm . --load
+# Run:
+#   docker run --rm -it --platform linux/arm64 nntbn:arm make test ARCH=arm TECH=cmsis-dsp LDFLAGS="-lm"
+
+FROM ubuntu:latest
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    clang \
+    lld \
+    gcc-arm-none-eabi \
+    libnewlib-arm-none-eabi
+COPY . /nn
+WORKDIR /nn
+
+ENTRYPOINT []
+CMD ["/bin/bash"]

@@ -1,0 +1,16 @@
+# Example usage:
+# Build:
+#   docker buildx build --platform linux/amd64 -f scripts/docker/Dockerfile.amd64 -t nntbn:amd64 . --load
+# Run:
+#   docker run --rm -it --platform linux/amd64 nntbn:amd64 make test ARCH=generic LDFLAGS="-lm"
+
+FROM ubuntu:latest
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    clang \
+    lld
+COPY . /nn
+WORKDIR /nn
+
+ENTRYPOINT []
+CMD ["/bin/bash"]
