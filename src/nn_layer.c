@@ -57,14 +57,13 @@ bool nn_layer_set_biases(NNLayer *layer, const float biases[NN_LAYER_MAX_BIASES]
     return true;
 }
 
-// nn_layer_compute computes the given layer with the given inputs and stores the result in outputs.
-bool nn_layer_compute(const NNLayer *layer, const float inputs[NN_LAYER_MAX_BATCH_SIZE][NN_LAYER_MAX_INPUT_SIZE], float outputs[NN_LAYER_MAX_BATCH_SIZE][NN_LAYER_MAX_OUTPUT_SIZE], size_t batch_size, NNError *error) {
+// nn_layer_forward computes the given layer with the given inputs and stores the result in outputs.
+bool nn_layer_forward(const NNLayer *layer, const float inputs[NN_LAYER_MAX_BATCH_SIZE][NN_LAYER_MAX_INPUT_SIZE], float outputs[NN_LAYER_MAX_BATCH_SIZE][NN_LAYER_MAX_OUTPUT_SIZE], size_t batch_size, NNError *error) {
     nn_error_set(error, NN_ERROR_NONE, NULL);
     if (layer == NULL) {
         nn_error_set(error, NN_ERROR_INVALID_INSTANCE, "layer is NULL");
         return false;
-    }
-    if (batch_size == 0) {
+    } else if (batch_size == 0) {
         nn_error_set(error, NN_ERROR_INVALID_SIZE, "invalid batch size");
         return false;
     }
