@@ -7,9 +7,11 @@
 #include "nn_test.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 int main(int argc, char *argv[]) {
     nn_init_app(argc, argv);
+    srand((unsigned int)time(NULL));
 
     if (!nn_neon_available()) {
         printf("ARM NEON not available\n");

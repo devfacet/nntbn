@@ -7,9 +7,11 @@
 #include "nn_test.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 int main(int argc, char *argv[]) {
     nn_init_app(argc, argv);
+    srand((unsigned int)time(NULL));
 
     if (!nn_cmsis_dsp_available()) {
         printf("ARM CMSIS-DSP not available\n");
