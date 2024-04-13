@@ -4,7 +4,7 @@ nntbn is a neural network library to be named.
 The goal of this library is to provide a framework for training and running neural networks
 across various platforms, from server-grade hardware to desktops, mobile, and embedded devices.
 
-> ⚠️️ This project is in the early stages of development and is not yet ready for use.
+## ⚠️️ This project is in the early stages of development and is not yet ready for use.
 
 ## Requirements
 
