@@ -5,6 +5,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// M_PI is not defined in some compilers.
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 // nn_layer_init initializes a layer with the given arguments.
 bool nn_layer_init(NNLayer *layer, size_t input_size, size_t output_size, NNActivationFunction act_func, NNDotProductFunction dot_product_func, NNError *error) {
     nn_error_set(error, NN_ERROR_NONE, NULL);
