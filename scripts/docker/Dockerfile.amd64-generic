@@ -5,19 +5,17 @@
 #   docker run --rm -it --platform linux/amd64 nntbn:amd64-generic /nn/build/tests/arch/generic/neuron
 
 # Build
-#FROM ubuntu:latest as build
-FROM nntbn:amd64 as build
-# RUN apt-get update && apt-get install -y --no-install-recommends \
-#     build-essential \
-#     clang \
-#     lld
-# COPY . /nn
+FROM ubuntu:latest as build
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    clang \
+    lld
+COPY . /nn
 WORKDIR /nn
 RUN make build-tests ARCH=generic LDFLAGS="-lm"
 
 # Runtime
-#FROM ubuntu:latest
-FROM nntbn:amd64
+FROM ubuntu:latest
 WORKDIR /nn
 COPY --from=build /nn /nn
 
