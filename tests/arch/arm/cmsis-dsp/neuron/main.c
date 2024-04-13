@@ -131,6 +131,6 @@ int main() {
             .expected_output = 0.000012f,
         },
     };
-    run_test_cases(test_cases, N_TEST_CASES, "nn_dot_product_cmsis", nn_dot_product_cmsis);
+    run_test_cases(test_cases, N_TEST_CASES, "nn_neuron", nn_dot_product_cmsis);
     return 0;
 }
