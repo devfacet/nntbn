@@ -84,12 +84,14 @@ jobs:
           elif [ "${{ matrix.test }}" == "arm-cmsis-dsp" ]; then
             TESTS=arch/arm/cmsis-dsp/dot_product_perf,arch/arm/cmsis-dsp/neuron,arch/arm/cmsis-dsp/neuron_perf
           elif [ "${{ matrix.test }}" == "generic" ]; then
-            TESTS=arch/generic/dot_product,arch/generic/dot_product_perf,arch/generic/layer,arch/generic/neuron,arch/generic/neuron_perf
+            TESTS=arch/generic/dot_product,arch/generic/dot_product_perf,arch/generic/layer,arch/generic/layer_multi,arch/generic/neuron,arch/generic/neuron_perf
           else
             echo "unknown test"
             exit 1
           fi
           IFS=',' read -ra TESTS <<< "$TESTS"
           for TEST in "${TESTS[@]}"; do
+            echo "running ${TEST}"
             docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} "/nn/build/tests/${TEST}"
+            echo " "
           done
