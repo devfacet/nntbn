@@ -42,7 +42,7 @@ void run_test_cases(TestCase *test_cases, int n_cases, char *info) {
         nn_layer_set_biases(&layer, tc.biases, &error);
         assert(error.code == NN_ERROR_NONE);
         float intermediate_outputs[NN_LAYER_MAX_BATCH_SIZE][NN_LAYER_MAX_OUTPUT_SIZE];
-        const bool first_layer_success = nn_layer_compute(&layer, tc.inputs, intermediate_outputs, tc.batch_size, &error);
+        const bool first_layer_success = nn_layer_forward(&layer, tc.inputs, intermediate_outputs, tc.batch_size, &error);
         assert(first_layer_success == true);
         assert(error.code == NN_ERROR_NONE);
         nn_layer_set_weights(&layer, tc.weights2, &error);
@@ -50,7 +50,7 @@ void run_test_cases(TestCase *test_cases, int n_cases, char *info) {
         nn_layer_set_biases(&layer, tc.biases2, &error);
         assert(error.code == NN_ERROR_NONE);
         float final_outputs[NN_LAYER_MAX_BATCH_SIZE][NN_LAYER_MAX_OUTPUT_SIZE];
-        const bool second_layer_success = nn_layer_compute(&layer, intermediate_outputs, final_outputs, tc.batch_size, &error);
+        const bool second_layer_success = nn_layer_forward(&layer, intermediate_outputs, final_outputs, tc.batch_size, &error);
         assert(second_layer_success == true);
         assert(error.code == NN_ERROR_NONE);
         for (size_t i = 0; i < tc.batch_size; ++i) {
@@ -156,6 +156,6 @@ int main() {
         },
     };
 
-    run_test_cases(test_cases, N_TEST_CASES, "nn_layer");
+    run_test_cases(test_cases, N_TEST_CASES, "NNLayer");
     return 0;
 }

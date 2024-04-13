@@ -40,7 +40,7 @@ void run_test_cases(TestCase *test_cases, int n_cases, char *info) {
         nn_layer_set_biases(&layer, tc.biases, &error);
         assert(error.code == NN_ERROR_NONE);
         float outputs[NN_LAYER_MAX_BATCH_SIZE][NN_LAYER_MAX_OUTPUT_SIZE];
-        const bool success = nn_layer_compute(&layer, tc.inputs, outputs, tc.batch_size, &error);
+        const bool success = nn_layer_forward(&layer, tc.inputs, outputs, tc.batch_size, &error);
         assert(success == true);
         assert(error.code == NN_ERROR_NONE);
         for (size_t i = 0; i < tc.batch_size; ++i) {
@@ -126,6 +126,6 @@ int main() {
         },
     };
 
-    run_test_cases(test_cases, N_TEST_CASES, "nn_layer");
+    run_test_cases(test_cases, N_TEST_CASES, "NNLayer");
     return 0;
 }

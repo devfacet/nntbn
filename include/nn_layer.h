@@ -46,7 +46,7 @@ bool nn_layer_set_weights(NNLayer *layer, const float weights[NN_LAYER_MAX_OUTPU
 // nn_layer_set_biases sets the biases of the given layer.
 bool nn_layer_set_biases(NNLayer *layer, const float biases[NN_LAYER_MAX_BIASES], NNError *error);
 
-// nn_layer_compute computes the given layer with the given inputs and stores the result in outputs.
-bool nn_layer_compute(const NNLayer *layer, const float inputs[NN_LAYER_MAX_BATCH_SIZE][NN_LAYER_MAX_INPUT_SIZE], float outputs[NN_LAYER_MAX_BATCH_SIZE][NN_LAYER_MAX_OUTPUT_SIZE], size_t batch_size, NNError *error);
+// nn_layer_forward computes the given layer with the given inputs and stores the result in outputs.
+bool nn_layer_forward(const NNLayer *layer, const float inputs[NN_LAYER_MAX_BATCH_SIZE][NN_LAYER_MAX_INPUT_SIZE], float outputs[NN_LAYER_MAX_BATCH_SIZE][NN_LAYER_MAX_OUTPUT_SIZE], size_t batch_size, NNError *error);
 
 #endif // NN_LAYER_H

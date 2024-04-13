@@ -12,8 +12,7 @@ bool nn_neuron_init(NNNeuron *neuron, const float weights[NN_NEURON_MAX_WEIGHTS]
     if (neuron == NULL) {
         nn_error_set(error, NN_ERROR_INVALID_INSTANCE, "neuron is NULL");
         return false;
-    }
-    if (weights == NULL) {
+    } else if (weights == NULL) {
         nn_error_set(error, NN_ERROR_INVALID_INSTANCE, "weights is NULL");
         return false;
     }
