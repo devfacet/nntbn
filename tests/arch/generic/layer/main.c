@@ -16,14 +16,14 @@
 typedef struct {
     size_t input_size;
     size_t output_size;
-    float weights[LAYER_MAX_OUTPUT_SIZE][LAYER_MAX_INPUT_SIZE];
-    float biases[LAYER_MAX_BIASES];
+    float weights[NN_LAYER_MAX_OUTPUT_SIZE][NN_LAYER_MAX_INPUT_SIZE];
+    float biases[NN_LAYER_MAX_BIASES];
     NNActivationFunction act_func;
     NNDotProductFunction dot_product_func;
     size_t batch_size;
-    float inputs[LAYER_MAX_BATCH_SIZE][LAYER_MAX_INPUT_SIZE];
+    float inputs[NN_LAYER_MAX_BATCH_SIZE][NN_LAYER_MAX_INPUT_SIZE];
     float output_tolerance;
-    float expected_outputs[LAYER_MAX_BATCH_SIZE][LAYER_MAX_OUTPUT_SIZE];
+    float expected_outputs[NN_LAYER_MAX_BATCH_SIZE][NN_LAYER_MAX_OUTPUT_SIZE];
 } TestCase;
 
 // run_test_cases runs the test cases.
@@ -39,7 +39,7 @@ void run_test_cases(TestCase *test_cases, int n_cases, char *info) {
         assert(error.code == NN_ERROR_NONE);
         nn_layer_set_biases(&layer, tc.biases, &error);
         assert(error.code == NN_ERROR_NONE);
-        float outputs[LAYER_MAX_BATCH_SIZE][LAYER_MAX_OUTPUT_SIZE];
+        float outputs[NN_LAYER_MAX_BATCH_SIZE][NN_LAYER_MAX_OUTPUT_SIZE];
         const bool success = nn_layer_compute(&layer, tc.inputs, outputs, tc.batch_size, &error);
         assert(success == true);
         assert(error.code == NN_ERROR_NONE);
