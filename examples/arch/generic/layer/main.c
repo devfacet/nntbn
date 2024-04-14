@@ -16,7 +16,7 @@ int main() {
     const int batch_size = 2;
 
     // Initialize a layer with the given input and output sizes, ReLU activation function, and dot product function
-    if (!nn_layer_init(&layer, input_size, output_size, nn_activation_func_relu, nn_dot_product, &error)) {
+    if (!nn_layer_init(&layer, input_size, output_size, &error)) {
         fprintf(stderr, "error: %s\n", error.message);
         return 1;
     }
@@ -29,6 +29,19 @@ int main() {
 
     // Initialize the biases of the layer to zero
     if (!nn_layer_init_biases_zeros(&layer, &error)) {
+        fprintf(stderr, "error: %s\n", error.message);
+        return 1;
+    }
+
+    // Set the dot product function of the layer
+    if (!nn_layer_set_dot_product_func(&layer, nn_dot_product, &error)) {
+        fprintf(stderr, "error: %s\n", error.message);
+        return 1;
+    }
+
+    // Set the activation function of the layer
+    NNActivationFunction act_func = {.scalar = nn_activation_func_relu};
+    if (!nn_layer_set_activation_func(&layer, act_func, &error)) {
         fprintf(stderr, "error: %s\n", error.message);
         return 1;
     }

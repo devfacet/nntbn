@@ -6,8 +6,11 @@
 // NNErrorCode defines the error codes.
 typedef enum {
     NN_ERROR_NONE = 0,                // no error
+    NN_ERROR_NOT_IMPLEMENTED,         // not implemented
     NN_ERROR_INVALID_INSTANCE,        // invalid instance
     NN_ERROR_INVALID_SIZE,            // invalid size
+    NN_ERROR_INVALID_VALUE,           // invalid value
+    NN_ERROR_INVALID_TYPE,            // invalid type
     NN_ERROR_NEON_NOT_AVAILABLE,      // NEON instructions not available
     NN_ERROR_CMSIS_DSP_NOT_AVAILABLE, // CMSIS-DSP functions not available
 } NNErrorCode;

@@ -33,12 +33,12 @@ typedef struct {
     size_t output_size;
     float weights[NN_LAYER_MAX_OUTPUT_SIZE][NN_LAYER_MAX_INPUT_SIZE];
     float biases[NN_LAYER_MAX_BIASES];
-    NNActivationFunction act_func;
     NNDotProductFunction dot_product_func;
+    NNActivationFunction act_func;
 } NNLayer;
 
 // nn_layer_init initializes a layer with the given arguments.
-bool nn_layer_init(NNLayer *layer, size_t input_size, size_t output_size, NNActivationFunction act_func, NNDotProductFunction dot_product_func, NNError *error);
+bool nn_layer_init(NNLayer *layer, size_t input_size, size_t output_size, NNError *error);
 
 // nn_layer_init_weights_gaussian initializes the weights of the layer with a Gaussian distribution.
 bool nn_layer_init_weights_gaussian(NNLayer *layer, float scale, NNError *error);
@@ -51,6 +51,12 @@ bool nn_layer_set_weights(NNLayer *layer, const float weights[NN_LAYER_MAX_OUTPU
 
 // nn_layer_set_biases sets the biases of the given layer.
 bool nn_layer_set_biases(NNLayer *layer, const float biases[NN_LAYER_MAX_BIASES], NNError *error);
+
+// nn_layer_set_dot_product_func sets the dot product function of the given layer.
+bool nn_layer_set_dot_product_func(NNLayer *layer, NNDotProductFunction dot_product_func, NNError *error);
+
+// nn_layer_set_activation_func sets the activation function of the given layer.
+bool nn_layer_set_activation_func(NNLayer *layer, NNActivationFunction act_func, NNError *error);
 
 // nn_layer_forward computes the given layer with the given inputs and stores the result in outputs.
 bool nn_layer_forward(const NNLayer *layer, const float inputs[NN_LAYER_MAX_BATCH_SIZE][NN_LAYER_MAX_INPUT_SIZE], float outputs[NN_LAYER_MAX_BATCH_SIZE][NN_LAYER_MAX_OUTPUT_SIZE], size_t batch_size, NNError *error);
