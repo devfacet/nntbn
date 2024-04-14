@@ -29,7 +29,11 @@ void run_test_cases(TestCase *test_cases, int n_cases, char *info, NNDotProductF
         NNNeuron neuron;
         NNError error;
 
-        nn_neuron_init(&neuron, tc.weights, tc.input_size, tc.bias, nn_activation_func_identity, dot_product_func, &error);
+        nn_neuron_init(&neuron, tc.weights, tc.input_size, tc.bias, &error);
+        assert(error.code == NN_ERROR_NONE);
+        nn_neuron_set_dot_product_func(&neuron, dot_product_func, &error);
+        assert(error.code == NN_ERROR_NONE);
+        nn_neuron_set_activation_func(&neuron, nn_activation_func_identity, &error);
         assert(error.code == NN_ERROR_NONE);
         const float output = nn_neuron_compute(&neuron, tc.inputs, &error);
         assert(error.code == NN_ERROR_NONE);

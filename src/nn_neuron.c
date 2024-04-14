@@ -7,7 +7,7 @@
 #include <stdio.h>
 
 // nn_neuron_init initializes a neuron with the given arguments.
-bool nn_neuron_init(NNNeuron *neuron, const float weights[NN_NEURON_MAX_WEIGHTS], size_t input_size, float bias, NNActivationFunction act_func, NNDotProductFunction dot_product_func, NNError *error) {
+bool nn_neuron_init(NNNeuron *neuron, const float weights[NN_NEURON_MAX_WEIGHTS], size_t input_size, float bias, NNError *error) {
     nn_error_set(error, NN_ERROR_NONE, NULL);
     if (neuron == NULL) {
         nn_error_set(error, NN_ERROR_INVALID_INSTANCE, "neuron is NULL");
@@ -21,12 +21,6 @@ bool nn_neuron_init(NNNeuron *neuron, const float weights[NN_NEURON_MAX_WEIGHTS]
         neuron->weights[i] = weights[i];
     }
     neuron->bias = bias;
-    if (act_func != NULL) {
-        neuron->act_func = act_func;
-    }
-    if (dot_product_func != NULL) {
-        neuron->dot_product_func = dot_product_func;
-    }
     return true;
 }
 
@@ -51,6 +45,28 @@ bool nn_neuron_set_bias(NNNeuron *neuron, float bias, NNError *error) {
         return false;
     }
     neuron->bias = bias;
+    return true;
+}
+
+// nn_neuron_set_dot_product_func sets the dot product function of the given neuron.
+bool nn_neuron_set_dot_product_func(NNNeuron *neuron, NNDotProductFunction dot_product_func, NNError *error) {
+    nn_error_set(error, NN_ERROR_NONE, NULL);
+    if (neuron == NULL) {
+        nn_error_set(error, NN_ERROR_INVALID_INSTANCE, "neuron is NULL");
+        return false;
+    }
+    neuron->dot_product_func = dot_product_func;
+    return true;
+}
+
+// nn_neuron_set_activation_func sets the activation function of the given neuron.
+bool nn_neuron_set_activation_func(NNNeuron *neuron, NNActivationFunctionScalar act_func, NNError *error) {
+    nn_error_set(error, NN_ERROR_NONE, NULL);
+    if (neuron == NULL) {
+        nn_error_set(error, NN_ERROR_INVALID_INSTANCE, "neuron is NULL");
+        return false;
+    }
+    neuron->act_func = act_func;
     return true;
 }
 

@@ -32,7 +32,13 @@ int main(int argc, char *argv[]) {
         inputs[i] = (float)rand() / (float)RAND_MAX;
     }
 
-    if (!nn_neuron_init(&neuron, weights, input_size, bias, nn_activation_func_identity, nn_dot_product_cmsis, &error)) {
+    if (!nn_neuron_init(&neuron, weights, input_size, bias, &error)) {
+        printf("error: %s\n", error.message);
+        return 1;
+    } else if (!nn_neuron_set_activation_func(&neuron, nn_activation_func_identity, &error)) {
+        printf("error: %s\n", error.message);
+        return 1;
+    } else if (!nn_neuron_set_dot_product_func(&neuron, nn_dot_product_cmsis, &error)) {
         printf("error: %s\n", error.message);
         return 1;
     }

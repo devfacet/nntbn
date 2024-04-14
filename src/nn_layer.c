@@ -11,7 +11,7 @@
 #endif
 
 // nn_layer_init initializes a layer with the given arguments.
-bool nn_layer_init(NNLayer *layer, size_t input_size, size_t output_size, NNActivationFunction act_func, NNDotProductFunction dot_product_func, NNError *error) {
+bool nn_layer_init(NNLayer *layer, size_t input_size, size_t output_size, NNError *error) {
     nn_error_set(error, NN_ERROR_NONE, NULL);
     if (layer == NULL) {
         nn_error_set(error, NN_ERROR_INVALID_INSTANCE, "layer is NULL");
@@ -27,12 +27,6 @@ bool nn_layer_init(NNLayer *layer, size_t input_size, size_t output_size, NNActi
     }
     layer->input_size = input_size;
     layer->output_size = output_size;
-    if (act_func) {
-        layer->act_func = act_func;
-    }
-    if (dot_product_func) {
-        layer->dot_product_func = dot_product_func;
-    }
 
     return true;
 }
@@ -104,6 +98,30 @@ bool nn_layer_set_biases(NNLayer *layer, const float biases[NN_LAYER_MAX_BIASES]
     return true;
 }
 
+// nn_layer_set_dot_product_func sets the dot product function of the given layer.
+bool nn_layer_set_dot_product_func(NNLayer *layer, NNDotProductFunction dot_product_func, NNError *error) {
+    nn_error_set(error, NN_ERROR_NONE, NULL);
+    if (layer == NULL) {
+        nn_error_set(error, NN_ERROR_INVALID_INSTANCE, "layer is NULL");
+        return false;
+    }
+    layer->dot_product_func = dot_product_func;
+
+    return true;
+}
+
+// nn_layer_set_activation_func sets the activation function of the given layer.
+bool nn_layer_set_activation_func(NNLayer *layer, NNActivationFunction act_func, NNError *error) {
+    nn_error_set(error, NN_ERROR_NONE, NULL);
+    if (layer == NULL) {
+        nn_error_set(error, NN_ERROR_INVALID_INSTANCE, "layer is NULL");
+        return false;
+    }
+    layer->act_func = act_func;
+
+    return true;
+}
+
 // nn_layer_forward computes the given layer with the given inputs and stores the result in outputs.
 bool nn_layer_forward(const NNLayer *layer, const float inputs[NN_LAYER_MAX_BATCH_SIZE][NN_LAYER_MAX_INPUT_SIZE], float outputs[NN_LAYER_MAX_BATCH_SIZE][NN_LAYER_MAX_OUTPUT_SIZE], size_t batch_size, NNError *error) {
     nn_error_set(error, NN_ERROR_NONE, NULL);
@@ -123,8 +141,8 @@ bool nn_layer_forward(const NNLayer *layer, const float inputs[NN_LAYER_MAX_BATC
             if (layer->dot_product_func != NULL) {
                 outputs[i][j] += layer->dot_product_func(inputs[i], layer->weights[j], layer->input_size);
             }
-            if (layer->act_func != NULL) {
-                outputs[i][j] = layer->act_func(outputs[i][j]);
+            if (layer->act_func.scalar != NULL) {
+                outputs[i][j] = layer->act_func.scalar(outputs[i][j]);
             }
         }
     }

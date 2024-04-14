@@ -18,8 +18,8 @@ typedef struct {
     size_t output_size;
     float weights[NN_LAYER_MAX_OUTPUT_SIZE][NN_LAYER_MAX_INPUT_SIZE];
     float biases[NN_LAYER_MAX_BIASES];
-    NNActivationFunction act_func;
     NNDotProductFunction dot_product_func;
+    NNActivationFunction act_func;
     size_t batch_size;
     float inputs[NN_LAYER_MAX_BATCH_SIZE][NN_LAYER_MAX_INPUT_SIZE];
     float output_tolerance;
@@ -33,7 +33,11 @@ void run_test_cases(TestCase *test_cases, int n_cases, char *info) {
         NNLayer layer;
         NNError error;
 
-        nn_layer_init(&layer, tc.input_size, tc.output_size, tc.act_func, tc.dot_product_func, &error);
+        nn_layer_init(&layer, tc.input_size, tc.output_size, &error);
+        assert(error.code == NN_ERROR_NONE);
+        nn_layer_set_dot_product_func(&layer, tc.dot_product_func, &error);
+        assert(error.code == NN_ERROR_NONE);
+        nn_layer_set_activation_func(&layer, tc.act_func, &error);
         assert(error.code == NN_ERROR_NONE);
         nn_layer_set_weights(&layer, tc.weights, &error);
         assert(error.code == NN_ERROR_NONE);
@@ -63,8 +67,8 @@ int main() {
                 {-0.3f, 0.4f, 0.2f, -0.5f},
             },
             .biases = {0.5f, -0.1f, 0.2f},
-            .act_func = nn_activation_func_identity,
             .dot_product_func = nn_dot_product,
+            .act_func = {.scalar = nn_activation_func_identity},
             .batch_size = 2,
             .inputs = {
                 {1.5f, -2.0f, 1.0f, -1.5f},
@@ -86,8 +90,8 @@ int main() {
                 {0.4f, 0.1f, -0.4f, 0.6f},
             },
             .biases = {1.0f, 0.5f, -0.2f},
-            .act_func = nn_activation_func_identity,
             .dot_product_func = nn_dot_product,
+            .act_func = {.scalar = nn_activation_func_identity},
             .batch_size = 2,
             .inputs = {
                 {0.5f, 0.1f, -0.2f, 0.4f},
@@ -109,8 +113,8 @@ int main() {
                 {0.1f, 0.4f, 0.2f, -0.2f},
             },
             .biases = {0.2f, -0.3f, 0.4f},
-            .act_func = nn_activation_func_identity,
             .dot_product_func = nn_dot_product,
+            .act_func = {.scalar = nn_activation_func_identity},
             .batch_size = 3,
             .inputs = {
                 {2.0f, -1.5f, 0.5f, 0.6f},
