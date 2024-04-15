@@ -94,7 +94,7 @@ bool nn_layer_set_biases(NNLayer *layer, const float biases[NN_LAYER_MAX_BIASES]
 }
 
 // nn_layer_set_dot_product_func sets the dot product function of the given layer.
-bool nn_layer_set_dot_product_func(NNLayer *layer, NNDotProductFunction dot_product_func, NNError *error) {
+bool nn_layer_set_dot_product_func(NNLayer *layer, NNDotProdFunc dot_product_func, NNError *error) {
     nn_error_set(error, NN_ERROR_NONE, NULL);
     if (layer == NULL) {
         nn_error_set(error, NN_ERROR_INVALID_INSTANCE, "layer is NULL");

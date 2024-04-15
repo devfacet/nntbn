@@ -48,8 +48,8 @@ bool nn_neuron_set_bias(NNNeuron *neuron, float bias, NNError *error) {
     return true;
 }
 
-// nn_neuron_set_dot_product_func sets the dot product function of the given neuron.
-bool nn_neuron_set_dot_product_func(NNNeuron *neuron, NNDotProductFunction dot_product_func, NNError *error) {
+// nn_neuron_set_dot_prod_func sets the dot product function of the given neuron.
+bool nn_neuron_set_dot_prod_func(NNNeuron *neuron, NNDotProdFunc dot_product_func, NNError *error) {
     nn_error_set(error, NN_ERROR_NONE, NULL);
     if (neuron == NULL) {
         nn_error_set(error, NN_ERROR_INVALID_INSTANCE, "neuron is NULL");

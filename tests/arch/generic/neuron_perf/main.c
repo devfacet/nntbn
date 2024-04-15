@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
     if (!nn_neuron_init(&neuron, weights, input_size, bias, &error)) {
         printf("error: %s\n", error.message);
         return 1;
-    } else if (!nn_neuron_set_dot_product_func(&neuron, nn_dot_product, &error)) {
+    } else if (!nn_neuron_set_dot_prod_func(&neuron, nn_dot_prod, &error)) {
         printf("error: %s\n", error.message);
         return 1;
     } else if (!nn_neuron_set_act_func(&neuron, nn_act_func_identity, &error)) {

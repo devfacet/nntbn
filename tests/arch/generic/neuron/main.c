@@ -16,13 +16,13 @@ typedef struct {
     float weights[NN_NEURON_MAX_WEIGHTS];
     size_t input_size;
     float bias;
-    NNDotProductFunction dot_product_func;
+    NNDotProdFunc dot_product_func;
     float output_tolerance;
     float expected_output;
 } TestCase;
 
 // run_test_cases runs the test cases.
-void run_test_cases(TestCase *test_cases, int n_cases, char *info, NNDotProductFunction dot_product_func) {
+void run_test_cases(TestCase *test_cases, int n_cases, char *info, NNDotProdFunc dot_product_func) {
     for (int i = 0; i < n_cases; ++i) {
         TestCase tc = test_cases[i];
         NNNeuron neuron;
@@ -30,7 +30,7 @@ void run_test_cases(TestCase *test_cases, int n_cases, char *info, NNDotProductF
 
         nn_neuron_init(&neuron, tc.weights, tc.input_size, tc.bias, &error);
         assert(error.code == NN_ERROR_NONE);
-        nn_neuron_set_dot_product_func(&neuron, dot_product_func, &error);
+        nn_neuron_set_dot_prod_func(&neuron, dot_product_func, &error);
         assert(error.code == NN_ERROR_NONE);
         nn_neuron_set_act_func(&neuron, nn_act_func_identity, &error);
         const float output = nn_neuron_compute(&neuron, tc.inputs, &error);
@@ -133,6 +133,6 @@ int main() {
             .expected_output = 0.000012f,
         },
     };
-    run_test_cases(test_cases, N_TEST_CASES, "NNNeuron", nn_dot_product);
+    run_test_cases(test_cases, N_TEST_CASES, "NNNeuron", nn_dot_prod);
     return 0;
 }

@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
     } else if (!nn_neuron_set_act_func(&neuron, nn_act_func_identity, &error)) {
         printf("error: %s\n", error.message);
         return 1;
-    } else if (!nn_neuron_set_dot_product_func(&neuron, nn_dot_product_neon, &error)) {
+    } else if (!nn_neuron_set_dot_prod_func(&neuron, nn_dot_product_neon, &error)) {
         printf("error: %s\n", error.message);
         return 1;
     }
