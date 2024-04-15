@@ -34,7 +34,7 @@ int main() {
     }
 
     // Set the dot product function of the layer
-    if (!nn_layer_set_dot_product_func(&layer, nn_dot_prod, &error)) {
+    if (!nn_layer_set_dot_prod_func(&layer, nn_dot_prod, &error)) {
         fprintf(stderr, "error: %s\n", error.message);
         return 1;
     }
