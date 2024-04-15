@@ -20,7 +20,7 @@ typedef struct {
     float biases[NN_LAYER_MAX_BIASES];
     float weights2[NN_LAYER_MAX_OUTPUT_SIZE][NN_LAYER_MAX_INPUT_SIZE];
     float biases2[NN_LAYER_MAX_BIASES];
-    NNDotProductFunction dot_product_func;
+    NNDotProdFunc dot_product_func;
     NNActFuncScalar act_func_scalar;
     size_t batch_size;
     float inputs[NN_LAYER_MAX_BATCH_SIZE][NN_LAYER_MAX_INPUT_SIZE];

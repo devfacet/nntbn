@@ -16,13 +16,13 @@ typedef struct {
     float b[4];
     size_t vector_size;
     float bias;
-    NNDotProductFunction dot_product_func;
+    NNDotProdFunc dot_product_func;
     float output_tolerance;
     float expected_output;
 } TestCase;
 
 // run_test_cases runs the test cases.
-void run_test_cases(TestCase *test_cases, int n_cases, char *info, NNDotProductFunction dot_product_func) {
+void run_test_cases(TestCase *test_cases, int n_cases, char *info, NNDotProdFunc dot_product_func) {
     for (int i = 0; i < n_cases; ++i) {
         TestCase tc = test_cases[i];
 

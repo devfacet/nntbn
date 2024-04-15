@@ -8,8 +8,8 @@
 #define NN_DOT_PROD_MAX_VECTOR_SIZE 64
 #endif
 
-// NNDotProductFunction represents a function that calculates the dot product of two vectors.
-typedef float (*NNDotProductFunction)(const float a[NN_DOT_PROD_MAX_VECTOR_SIZE], const float b[NN_DOT_PROD_MAX_VECTOR_SIZE], size_t vector_size);
+// NNDotProdFunc represents a function that calculates the dot product of two vectors.
+typedef float (*NNDotProdFunc)(const float a[NN_DOT_PROD_MAX_VECTOR_SIZE], const float b[NN_DOT_PROD_MAX_VECTOR_SIZE], size_t vector_size);
 
 // nn_dot_prod calculates the dot product of two vectors.
 float nn_dot_prod(const float a[NN_DOT_PROD_MAX_VECTOR_SIZE], const float b[NN_DOT_PROD_MAX_VECTOR_SIZE], size_t vector_size);
