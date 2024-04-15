@@ -21,7 +21,7 @@ typedef struct {
     float weights2[NN_LAYER_MAX_OUTPUT_SIZE][NN_LAYER_MAX_INPUT_SIZE];
     float biases2[NN_LAYER_MAX_BIASES];
     NNDotProductFunction dot_product_func;
-    NNActivationFunction act_func;
+    NNActivationFunctionScalar act_func_scalar;
     size_t batch_size;
     float inputs[NN_LAYER_MAX_BATCH_SIZE][NN_LAYER_MAX_INPUT_SIZE];
     float output_tolerance;
@@ -39,8 +39,6 @@ void run_test_cases(TestCase *test_cases, int n_cases, char *info) {
         assert(error.code == NN_ERROR_NONE);
         nn_layer_set_dot_product_func(&layer, tc.dot_product_func, &error);
         assert(error.code == NN_ERROR_NONE);
-        nn_layer_set_activation_func(&layer, tc.act_func, &error);
-        assert(error.code == NN_ERROR_NONE);
         nn_layer_set_weights(&layer, tc.weights, &error);
         assert(error.code == NN_ERROR_NONE);
         nn_layer_set_biases(&layer, tc.biases, &error);
@@ -49,6 +47,11 @@ void run_test_cases(TestCase *test_cases, int n_cases, char *info) {
         const bool first_layer_success = nn_layer_forward(&layer, tc.inputs, intermediate_outputs, tc.batch_size, &error);
         assert(first_layer_success == true);
         assert(error.code == NN_ERROR_NONE);
+        for (size_t i = 0; i < tc.batch_size; ++i) {
+            const bool laf = nn_activation_func_forward_scalar(tc.act_func_scalar, intermediate_outputs[i], intermediate_outputs[i], tc.output_size, &error);
+            assert(laf == true);
+            assert(error.code == NN_ERROR_NONE);
+        }
         nn_layer_set_weights(&layer, tc.weights2, &error);
         assert(error.code == NN_ERROR_NONE);
         nn_layer_set_biases(&layer, tc.biases2, &error);
@@ -84,7 +87,7 @@ int main() {
             },
             .biases2 = {0.5f, 1.5f, -0.2f},
             .dot_product_func = nn_dot_product,
-            .act_func = {.scalar = nn_activation_func_identity},
+            .act_func_scalar = nn_activation_func_identity,
             .batch_size = 3,
             .inputs = {
                 {0.9f, -0.3f, 2.2f, 1.9f},
@@ -114,7 +117,7 @@ int main() {
             },
             .biases2 = {-0.1f, 1.0f, 0.2f},
             .dot_product_func = nn_dot_product,
-            .act_func = {.scalar = nn_activation_func_identity},
+            .act_func_scalar = nn_activation_func_identity,
             .batch_size = 3,
             .inputs = {
                 {-0.5f, 2.1f, 1.9f, -1.3f},
@@ -144,7 +147,7 @@ int main() {
             },
             .biases2 = {0.7f, -1.1f, 0.3f},
             .dot_product_func = nn_dot_product,
-            .act_func = {.scalar = nn_activation_func_identity},
+            .act_func_scalar = nn_activation_func_identity,
             .batch_size = 3,
             .inputs = {
                 {0.2f, 2.8f, -1.5f, 1.6f},

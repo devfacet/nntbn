@@ -12,11 +12,11 @@
 
 // TestCase defines a single test case.
 typedef struct {
-    float input[NN_SOFTMAX_MAX_SIZE];
+    float input[NN_AF_VECTOR_MAX_SIZE];
     size_t input_size;
     NNActivationFunctionVector activation_func;
     float output_tolerance;
-    float expected_output[NN_SOFTMAX_MAX_SIZE];
+    float expected_output[NN_AF_VECTOR_MAX_SIZE];
 } TestCase;
 
 // run_test_cases runs the test cases.
@@ -25,7 +25,7 @@ void run_test_cases(TestCase *test_cases, int n_cases, char *info, NNActivationF
         TestCase tc = test_cases[i];
         NNError error;
 
-        float output[NN_SOFTMAX_MAX_SIZE];
+        float output[NN_AF_VECTOR_MAX_SIZE];
         const bool result = activation_func(tc.input, output, tc.input_size, &error);
         assert(result == true);
         assert(error.code == NN_ERROR_NONE);

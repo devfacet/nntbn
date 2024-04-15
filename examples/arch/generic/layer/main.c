@@ -39,13 +39,6 @@ int main() {
         return 1;
     }
 
-    // Set the activation function of the layer
-    NNActivationFunction act_func = {.scalar = nn_activation_func_relu};
-    if (!nn_layer_set_activation_func(&layer, act_func, &error)) {
-        fprintf(stderr, "error: %s\n", error.message);
-        return 1;
-    }
-
     // Generate random inputs
     float inputs[NN_LAYER_MAX_BATCH_SIZE][NN_LAYER_MAX_INPUT_SIZE];
     for (size_t i = 0; i < batch_size; ++i) {
@@ -56,9 +49,17 @@ int main() {
 
     // Compute the layer with the given inputs
     float outputs[NN_LAYER_MAX_BATCH_SIZE][NN_LAYER_MAX_OUTPUT_SIZE];
-    if (!nn_layer_forward(&layer, inputs, outputs, 2, &error)) {
+    if (!nn_layer_forward(&layer, inputs, outputs, batch_size, &error)) {
         fprintf(stderr, "error: %s\n", error.message);
         return 1;
+    }
+
+    // Compute the ReLU activation function on the outputs
+    for (size_t i = 0; i < batch_size; ++i) {
+        if (!nn_activation_func_forward_scalar(nn_activation_func_relu, outputs[i], outputs[i], output_size, &error)) {
+            fprintf(stderr, "error: %s\n", error.message);
+            return 1;
+        }
     }
 
     // Print the inputs

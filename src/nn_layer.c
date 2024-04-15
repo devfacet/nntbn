@@ -5,11 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// M_PI is not defined in some compilers.
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
-
 // nn_layer_init initializes a layer with the given arguments.
 bool nn_layer_init(NNLayer *layer, size_t input_size, size_t output_size, NNError *error) {
     nn_error_set(error, NN_ERROR_NONE, NULL);
@@ -110,18 +105,6 @@ bool nn_layer_set_dot_product_func(NNLayer *layer, NNDotProductFunction dot_prod
     return true;
 }
 
-// nn_layer_set_activation_func sets the activation function of the given layer.
-bool nn_layer_set_activation_func(NNLayer *layer, NNActivationFunction act_func, NNError *error) {
-    nn_error_set(error, NN_ERROR_NONE, NULL);
-    if (layer == NULL) {
-        nn_error_set(error, NN_ERROR_INVALID_INSTANCE, "layer is NULL");
-        return false;
-    }
-    layer->act_func = act_func;
-
-    return true;
-}
-
 // nn_layer_forward computes the given layer with the given inputs and stores the result in outputs.
 bool nn_layer_forward(const NNLayer *layer, const float inputs[NN_LAYER_MAX_BATCH_SIZE][NN_LAYER_MAX_INPUT_SIZE], float outputs[NN_LAYER_MAX_BATCH_SIZE][NN_LAYER_MAX_OUTPUT_SIZE], size_t batch_size, NNError *error) {
     nn_error_set(error, NN_ERROR_NONE, NULL);
@@ -131,19 +114,16 @@ bool nn_layer_forward(const NNLayer *layer, const float inputs[NN_LAYER_MAX_BATC
     } else if (batch_size == 0) {
         nn_error_set(error, NN_ERROR_INVALID_SIZE, "invalid batch size");
         return false;
+    } else if (layer->dot_product_func == NULL) {
+        nn_error_set(error, NN_ERROR_INVALID_FUNCTION, "dot product function is NULL");
+        return false;
     }
 
-    // Iterate over each input in the batch
+    // Iterate over batch inputs
     for (size_t i = 0; i < batch_size; ++i) {
-        // Iterate over each output in the layer
+        // Iterate over output neurons
         for (size_t j = 0; j < layer->output_size; ++j) {
-            outputs[i][j] = layer->biases[j];
-            if (layer->dot_product_func != NULL) {
-                outputs[i][j] += layer->dot_product_func(inputs[i], layer->weights[j], layer->input_size);
-            }
-            if (layer->act_func.scalar != NULL) {
-                outputs[i][j] = layer->act_func.scalar(outputs[i][j]);
-            }
+            outputs[i][j] = layer->dot_product_func(inputs[i], layer->weights[j], layer->input_size) + layer->biases[j];
         }
     }
 
