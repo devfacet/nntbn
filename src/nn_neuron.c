@@ -59,8 +59,8 @@ bool nn_neuron_set_dot_product_func(NNNeuron *neuron, NNDotProductFunction dot_p
     return true;
 }
 
-// nn_neuron_set_activation_func sets the activation function of the given neuron.
-bool nn_neuron_set_activation_func(NNNeuron *neuron, NNActivationFunctionScalar act_func, NNError *error) {
+// nn_neuron_set_act_func sets the activation function of the given neuron.
+bool nn_neuron_set_act_func(NNNeuron *neuron, NNActFuncScalar act_func, NNError *error) {
     nn_error_set(error, NN_ERROR_NONE, NULL);
     if (neuron == NULL) {
         nn_error_set(error, NN_ERROR_INVALID_INSTANCE, "neuron is NULL");

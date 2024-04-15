@@ -31,9 +31,6 @@ git submodule update --init
 ```shell
 make build-examples ARCH=generic
 make run-examples ARCH=generic
-
-make build-examples ARCH=arm TECH=neon,cmsis-dsp
-make run-examples ARCH=arm TECH=neon,cmsis-dsp
 ```
 
 ## Test
@@ -42,6 +39,7 @@ make run-examples ARCH=arm TECH=neon,cmsis-dsp
 make test
 make test ARCH=generic
 make test ARCH=arm TECH=neon,cmsis-dsp
+make test-all
 ```
 
 ## Contributing

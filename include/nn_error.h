@@ -11,6 +11,7 @@ typedef enum {
     NN_ERROR_INVALID_SIZE,            // invalid size
     NN_ERROR_INVALID_VALUE,           // invalid value
     NN_ERROR_INVALID_TYPE,            // invalid type
+    NN_ERROR_INVALID_FUNCTION,        // invalid function
     NN_ERROR_NEON_NOT_AVAILABLE,      // NEON instructions not available
     NN_ERROR_CMSIS_DSP_NOT_AVAILABLE, // CMSIS-DSP functions not available
 } NNErrorCode;
