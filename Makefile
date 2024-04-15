@@ -37,6 +37,16 @@ test:
 		$(MAKE) run-test ARCH=$(ARCH) TECH=$(TECH) TEST=$$test || exit 1; \
 	done
 
+## test-all                            Run tests (e.g., make test ARCH=generic)
+test-all:
+	@$(MAKE) build-tests ARCH=generic
+	@$(MAKE) build-tests ARCH=arm TECH=neon
+	@$(MAKE) build-tests ARCH=arm TECH=cmsis-dsp
+	@echo " "
+	@$(MAKE) run-tests ARCH=generic
+	@$(MAKE) run-tests ARCH=arm TECH=neon
+	@$(MAKE) run-tests ARCH=arm TECH=cmsis-dsp
+
 ## build-test                          Build a test (e.g., make build-test ARCH=generic TEST=arch/generic/neuron)
 build-test:
 	@echo building $(TEST)
@@ -55,6 +65,14 @@ run-test:
 	@echo running $(TEST)
 	@ARCH=$(ARCH) TECH=$(TECH) ARTIFACT=tests/$(TEST) ARGS="$(ARGS)" scripts/shell/run_artifact.sh
 	@echo " "
+
+## run-tests                           Run tests (e.g., make run-tests ARCH=generic)
+run-tests:
+	@$(eval TECH_FILTER := $(if $(TECH),$(shell echo $(TECH) | tr ',' '|'),.*))
+	@$(eval TESTS := $(shell find tests/arch/$(ARCH) -type f -name 'main.c' | grep -E "$(TECH_FILTER)" | sed 's|/main.c||' | sed 's|tests/||'))
+	@for test in $(TESTS); do \
+		$(MAKE) run-test ARCH=$(ARCH) TECH=$(TECH) TEST=$$test || exit 1; \
+	done
 
 ## build-example                       Build an example (e.g., make build-example ARCH=generic EXAMPLE=arch/generic/layer)
 build-example:
@@ -75,7 +93,7 @@ run-example:
 	@ARCH=$(ARCH) ARTIFACT=examples/$(EXAMPLE) ARGS="$(ARGS)" scripts/shell/run_artifact.sh
 	@echo " "
 
-# run-examples                         Run examples (e.g., make run-examples ARCH=generic)
+## run-examples                        Run examples (e.g., make run-examples ARCH=generic)
 run-examples:
 	@$(eval TECH_FILTER := $(if $(TECH),$(shell echo $(TECH) | tr ',' '|'),.*))
 	@$(eval EXAMPLES := $(shell find examples/arch/$(ARCH) -type f -name 'main.c' | grep -E "$(TECH_FILTER)" | sed 's|/main.c||' | sed 's|examples/||'))

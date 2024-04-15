@@ -14,13 +14,13 @@
 typedef struct {
     float input[NN_AF_VECTOR_MAX_SIZE];
     size_t input_size;
-    NNActivationFunctionVector activation_func;
+    NNActFuncVector activation_func;
     float output_tolerance;
     float expected_output[NN_AF_VECTOR_MAX_SIZE];
 } TestCase;
 
 // run_test_cases runs the test cases.
-void run_test_cases(TestCase *test_cases, int n_cases, char *info, NNActivationFunctionVector activation_func) {
+void run_test_cases(TestCase *test_cases, int n_cases, char *info, NNActFuncVector activation_func) {
     for (int i = 0; i < n_cases; ++i) {
         TestCase tc = test_cases[i];
         NNError error;
@@ -70,7 +70,7 @@ int main() {
         },
 
     };
-    run_test_cases(test_cases, N_TEST_CASES, "nn_activation_func_softmax", nn_activation_func_softmax);
+    run_test_cases(test_cases, N_TEST_CASES, "nn_act_func_softmax", nn_act_func_softmax);
 
     return 0;
 }

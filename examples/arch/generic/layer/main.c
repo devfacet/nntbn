@@ -56,7 +56,7 @@ int main() {
 
     // Compute the ReLU activation function on the outputs
     for (size_t i = 0; i < batch_size; ++i) {
-        if (!nn_activation_func_forward_scalar(nn_activation_func_relu, outputs[i], outputs[i], output_size, &error)) {
+        if (!nn_act_func_forward_scalar(nn_act_func_relu, outputs[i], outputs[i], output_size, &error)) {
             fprintf(stderr, "error: %s\n", error.message);
             return 1;
         }

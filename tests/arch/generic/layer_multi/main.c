@@ -21,7 +21,7 @@ typedef struct {
     float weights2[NN_LAYER_MAX_OUTPUT_SIZE][NN_LAYER_MAX_INPUT_SIZE];
     float biases2[NN_LAYER_MAX_BIASES];
     NNDotProductFunction dot_product_func;
-    NNActivationFunctionScalar act_func_scalar;
+    NNActFuncScalar act_func_scalar;
     size_t batch_size;
     float inputs[NN_LAYER_MAX_BATCH_SIZE][NN_LAYER_MAX_INPUT_SIZE];
     float output_tolerance;
@@ -48,7 +48,7 @@ void run_test_cases(TestCase *test_cases, int n_cases, char *info) {
         assert(first_layer_success == true);
         assert(error.code == NN_ERROR_NONE);
         for (size_t i = 0; i < tc.batch_size; ++i) {
-            const bool laf = nn_activation_func_forward_scalar(tc.act_func_scalar, intermediate_outputs[i], intermediate_outputs[i], tc.output_size, &error);
+            const bool laf = nn_act_func_forward_scalar(tc.act_func_scalar, intermediate_outputs[i], intermediate_outputs[i], tc.output_size, &error);
             assert(laf == true);
             assert(error.code == NN_ERROR_NONE);
         }
@@ -87,7 +87,7 @@ int main() {
             },
             .biases2 = {0.5f, 1.5f, -0.2f},
             .dot_product_func = nn_dot_product,
-            .act_func_scalar = nn_activation_func_identity,
+            .act_func_scalar = nn_act_func_identity,
             .batch_size = 3,
             .inputs = {
                 {0.9f, -0.3f, 2.2f, 1.9f},
@@ -117,7 +117,7 @@ int main() {
             },
             .biases2 = {-0.1f, 1.0f, 0.2f},
             .dot_product_func = nn_dot_product,
-            .act_func_scalar = nn_activation_func_identity,
+            .act_func_scalar = nn_act_func_identity,
             .batch_size = 3,
             .inputs = {
                 {-0.5f, 2.1f, 1.9f, -1.3f},
@@ -147,7 +147,7 @@ int main() {
             },
             .biases2 = {0.7f, -1.1f, 0.3f},
             .dot_product_func = nn_dot_product,
-            .act_func_scalar = nn_activation_func_identity,
+            .act_func_scalar = nn_act_func_identity,
             .batch_size = 3,
             .inputs = {
                 {0.2f, 2.8f, -1.5f, 1.6f},

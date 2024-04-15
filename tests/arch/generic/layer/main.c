@@ -19,8 +19,8 @@ typedef struct {
     float weights[NN_LAYER_MAX_OUTPUT_SIZE][NN_LAYER_MAX_INPUT_SIZE];
     float biases[NN_LAYER_MAX_BIASES];
     NNDotProductFunction dot_product_func;
-    NNActivationFunctionScalar act_func_scalar;
-    NNActivationFunctionVector act_func_vector;
+    NNActFuncScalar act_func_scalar;
+    NNActFuncVector act_func_vector;
     size_t batch_size;
     float inputs[NN_LAYER_MAX_BATCH_SIZE][NN_LAYER_MAX_INPUT_SIZE];
     float output_tolerance;
@@ -48,11 +48,11 @@ void run_test_cases(TestCase *test_cases, int n_cases, char *info) {
         assert(error.code == NN_ERROR_NONE);
         for (size_t i = 0; i < tc.batch_size; ++i) {
             if (tc.act_func_scalar != NULL) {
-                const bool laf = nn_activation_func_forward_scalar(tc.act_func_scalar, outputs[i], outputs[i], tc.output_size, &error);
+                const bool laf = nn_act_func_forward_scalar(tc.act_func_scalar, outputs[i], outputs[i], tc.output_size, &error);
                 assert(laf == true);
                 assert(error.code == NN_ERROR_NONE);
             } else if (tc.act_func_vector != NULL) {
-                const bool laf = nn_activation_func_forward_vector(tc.act_func_vector, outputs[i], outputs[i], tc.output_size, &error);
+                const bool laf = nn_act_func_forward_vector(tc.act_func_vector, outputs[i], outputs[i], tc.output_size, &error);
                 assert(laf == true);
                 assert(error.code == NN_ERROR_NONE);
             }
@@ -78,7 +78,7 @@ int main() {
             },
             .biases = {0.5f, -0.1f, 0.2f},
             .dot_product_func = nn_dot_product,
-            .act_func_scalar = nn_activation_func_identity,
+            .act_func_scalar = nn_act_func_identity,
             .batch_size = 2,
             .inputs = {
                 {1.5f, -2.0f, 1.0f, -1.5f},
@@ -101,7 +101,7 @@ int main() {
             },
             .biases = {0.5f, -0.1f, 0.2f},
             .dot_product_func = nn_dot_product,
-            .act_func_scalar = nn_activation_func_relu,
+            .act_func_scalar = nn_act_func_relu,
             .batch_size = 2,
             .inputs = {
                 {1.5f, -2.0f, 1.0f, -1.5f},
@@ -124,7 +124,7 @@ int main() {
             },
             .biases = {0.5f, -0.1f, 0.2f},
             .dot_product_func = nn_dot_product,
-            .act_func_vector = nn_activation_func_softmax,
+            .act_func_vector = nn_act_func_softmax,
             .batch_size = 2,
             .inputs = {
                 {1.5f, -2.0f, 1.0f, -1.5f},
@@ -147,7 +147,7 @@ int main() {
             },
             .biases = {1.0f, 0.5f, -0.2f},
             .dot_product_func = nn_dot_product,
-            .act_func_scalar = nn_activation_func_identity,
+            .act_func_scalar = nn_act_func_identity,
             .batch_size = 2,
             .inputs = {
                 {0.5f, 0.1f, -0.2f, 0.4f},
@@ -170,7 +170,7 @@ int main() {
             },
             .biases = {1.0f, 0.5f, -0.2f},
             .dot_product_func = nn_dot_product,
-            .act_func_scalar = nn_activation_func_relu,
+            .act_func_scalar = nn_act_func_relu,
             .batch_size = 2,
             .inputs = {
                 {0.5f, 0.1f, -0.2f, 0.4f},
@@ -193,7 +193,7 @@ int main() {
             },
             .biases = {1.0f, 0.5f, -0.2f},
             .dot_product_func = nn_dot_product,
-            .act_func_vector = nn_activation_func_softmax,
+            .act_func_vector = nn_act_func_softmax,
             .batch_size = 2,
             .inputs = {
                 {0.5f, 0.1f, -0.2f, 0.4f},
@@ -216,7 +216,7 @@ int main() {
             },
             .biases = {0.2f, -0.3f, 0.4f},
             .dot_product_func = nn_dot_product,
-            .act_func_scalar = nn_activation_func_identity,
+            .act_func_scalar = nn_act_func_identity,
             .batch_size = 3,
             .inputs = {
                 {2.0f, -1.5f, 0.5f, 0.6f},
@@ -241,7 +241,7 @@ int main() {
             },
             .biases = {0.2f, -0.3f, 0.4f},
             .dot_product_func = nn_dot_product,
-            .act_func_vector = nn_activation_func_softmax,
+            .act_func_vector = nn_act_func_softmax,
             .batch_size = 3,
             .inputs = {
                 {2.0f, -1.5f, 0.5f, 0.6f},
@@ -266,7 +266,7 @@ int main() {
             },
             .biases = {0.2f, -0.3f, 0.4f},
             .dot_product_func = nn_dot_product,
-            .act_func_scalar = nn_activation_func_relu,
+            .act_func_scalar = nn_act_func_relu,
             .batch_size = 3,
             .inputs = {
                 {2.0f, -1.5f, 0.5f, 0.6f},
