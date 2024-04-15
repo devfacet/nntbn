@@ -20,7 +20,7 @@ typedef struct {
     float biases[NN_LAYER_MAX_BIASES];
     float weights2[NN_LAYER_MAX_OUTPUT_SIZE][NN_LAYER_MAX_INPUT_SIZE];
     float biases2[NN_LAYER_MAX_BIASES];
-    NNDotProdFunc dot_product_func;
+    NNDotProdFunc dot_prod_func;
     NNActFuncScalar act_func_scalar;
     size_t batch_size;
     float inputs[NN_LAYER_MAX_BATCH_SIZE][NN_LAYER_MAX_INPUT_SIZE];
@@ -37,7 +37,7 @@ void run_test_cases(TestCase *test_cases, int n_cases, char *info) {
 
         nn_layer_init(&layer, tc.input_size, tc.output_size, &error);
         assert(error.code == NN_ERROR_NONE);
-        nn_layer_set_dot_product_func(&layer, tc.dot_product_func, &error);
+        nn_layer_set_dot_prod_func(&layer, tc.dot_prod_func, &error);
         assert(error.code == NN_ERROR_NONE);
         nn_layer_set_weights(&layer, tc.weights, &error);
         assert(error.code == NN_ERROR_NONE);
@@ -86,7 +86,7 @@ int main() {
                 {0.5f, -0.9f, 0.1f},
             },
             .biases2 = {0.5f, 1.5f, -0.2f},
-            .dot_product_func = nn_dot_prod,
+            .dot_prod_func = nn_dot_prod,
             .act_func_scalar = nn_act_func_identity,
             .batch_size = 3,
             .inputs = {
@@ -116,7 +116,7 @@ int main() {
                 {0.13f, -0.31f, 0.11f},
             },
             .biases2 = {-0.1f, 1.0f, 0.2f},
-            .dot_product_func = nn_dot_prod,
+            .dot_prod_func = nn_dot_prod,
             .act_func_scalar = nn_act_func_identity,
             .batch_size = 3,
             .inputs = {
@@ -146,7 +146,7 @@ int main() {
                 {-0.35f, 0.62f, -0.2f},
             },
             .biases2 = {0.7f, -1.1f, 0.3f},
-            .dot_product_func = nn_dot_prod,
+            .dot_prod_func = nn_dot_prod,
             .act_func_scalar = nn_act_func_identity,
             .batch_size = 3,
             .inputs = {

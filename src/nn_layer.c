@@ -93,14 +93,14 @@ bool nn_layer_set_biases(NNLayer *layer, const float biases[NN_LAYER_MAX_BIASES]
     return true;
 }
 
-// nn_layer_set_dot_product_func sets the dot product function of the given layer.
-bool nn_layer_set_dot_product_func(NNLayer *layer, NNDotProdFunc dot_product_func, NNError *error) {
+// nn_layer_set_dot_prod_func sets the dot product function of the given layer.
+bool nn_layer_set_dot_prod_func(NNLayer *layer, NNDotProdFunc dot_prod_func, NNError *error) {
     nn_error_set(error, NN_ERROR_NONE, NULL);
     if (layer == NULL) {
         nn_error_set(error, NN_ERROR_INVALID_INSTANCE, "layer is NULL");
         return false;
     }
-    layer->dot_product_func = dot_product_func;
+    layer->dot_prod_func = dot_prod_func;
 
     return true;
 }
@@ -114,7 +114,7 @@ bool nn_layer_forward(const NNLayer *layer, const float inputs[NN_LAYER_MAX_BATC
     } else if (batch_size == 0) {
         nn_error_set(error, NN_ERROR_INVALID_SIZE, "invalid batch size");
         return false;
-    } else if (layer->dot_product_func == NULL) {
+    } else if (layer->dot_prod_func == NULL) {
         nn_error_set(error, NN_ERROR_INVALID_FUNCTION, "dot product function is NULL");
         return false;
     }
@@ -123,7 +123,7 @@ bool nn_layer_forward(const NNLayer *layer, const float inputs[NN_LAYER_MAX_BATC
     for (size_t i = 0; i < batch_size; ++i) {
         // Iterate over output neurons
         for (size_t j = 0; j < layer->output_size; ++j) {
-            outputs[i][j] = layer->dot_product_func(inputs[i], layer->weights[j], layer->input_size) + layer->biases[j];
+            outputs[i][j] = layer->dot_prod_func(inputs[i], layer->weights[j], layer->input_size) + layer->biases[j];
         }
     }
 

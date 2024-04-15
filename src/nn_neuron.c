@@ -49,13 +49,13 @@ bool nn_neuron_set_bias(NNNeuron *neuron, float bias, NNError *error) {
 }
 
 // nn_neuron_set_dot_prod_func sets the dot product function of the given neuron.
-bool nn_neuron_set_dot_prod_func(NNNeuron *neuron, NNDotProdFunc dot_product_func, NNError *error) {
+bool nn_neuron_set_dot_prod_func(NNNeuron *neuron, NNDotProdFunc dot_prod_func, NNError *error) {
     nn_error_set(error, NN_ERROR_NONE, NULL);
     if (neuron == NULL) {
         nn_error_set(error, NN_ERROR_INVALID_INSTANCE, "neuron is NULL");
         return false;
     }
-    neuron->dot_product_func = dot_product_func;
+    neuron->dot_prod_func = dot_prod_func;
     return true;
 }
 
@@ -87,9 +87,9 @@ float nn_neuron_compute(const NNNeuron *neuron, const float inputs[NN_NEURON_MAX
     // 3. Apply the activation function
 
     // Compute the dot product
-    if (neuron->dot_product_func != NULL) {
+    if (neuron->dot_prod_func != NULL) {
         // Sum the weighted inputs
-        result = neuron->dot_product_func(neuron->weights, inputs, neuron->input_size);
+        result = neuron->dot_prod_func(neuron->weights, inputs, neuron->input_size);
     }
     // Add the bias
     result += neuron->bias;

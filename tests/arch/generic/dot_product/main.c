@@ -16,17 +16,17 @@ typedef struct {
     float b[4];
     size_t vector_size;
     float bias;
-    NNDotProdFunc dot_product_func;
+    NNDotProdFunc dot_prod_func;
     float output_tolerance;
     float expected_output;
 } TestCase;
 
 // run_test_cases runs the test cases.
-void run_test_cases(TestCase *test_cases, int n_cases, char *info, NNDotProdFunc dot_product_func) {
+void run_test_cases(TestCase *test_cases, int n_cases, char *info, NNDotProdFunc dot_prod_func) {
     for (int i = 0; i < n_cases; ++i) {
         TestCase tc = test_cases[i];
 
-        const float output = dot_product_func(tc.a, tc.b, tc.vector_size);
+        const float output = dot_prod_func(tc.a, tc.b, tc.vector_size);
         assert(isnan(output) == false);
         assert(fabs(output - tc.expected_output) < tc.output_tolerance);
         printf("passed: %s case=%d info=%s\n", __func__, i + 1, info);

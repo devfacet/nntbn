@@ -19,7 +19,7 @@ typedef struct {
     float weights[NN_NEURON_MAX_WEIGHTS];
     size_t input_size;
     float bias;
-    NNDotProdFunc dot_product_func;
+    NNDotProdFunc dot_prod_func;
     NNActFuncScalar act_func;
 } NNNeuron;
 
@@ -33,7 +33,7 @@ bool nn_neuron_set_weights(NNNeuron *neuron, const float weights[NN_NEURON_MAX_W
 bool nn_neuron_set_bias(NNNeuron *neuron, float bias, NNError *error);
 
 // nn_neuron_set_dot_prod_func sets the dot product function of the given neuron.
-bool nn_neuron_set_dot_prod_func(NNNeuron *neuron, NNDotProdFunc dot_product_func, NNError *error);
+bool nn_neuron_set_dot_prod_func(NNNeuron *neuron, NNDotProdFunc dot_prod_func, NNError *error);
 
 // nn_neuron_set_act_func sets the activation function of the given neuron.
 bool nn_neuron_set_act_func(NNNeuron *neuron, NNActFuncScalar act_func, NNError *error);
