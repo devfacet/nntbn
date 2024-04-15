@@ -35,8 +35,8 @@ bool nn_neuron_set_bias(NNNeuron *neuron, float bias, NNError *error);
 // nn_neuron_set_dot_product_func sets the dot product function of the given neuron.
 bool nn_neuron_set_dot_product_func(NNNeuron *neuron, NNDotProductFunction dot_product_func, NNError *error);
 
-// nn_neuron_set_activation_func sets the activation function of the given neuron.
-bool nn_neuron_set_activation_func(NNNeuron *neuron, NNActFuncScalar act_func, NNError *error);
+// nn_neuron_set_act_func sets the activation function of the given neuron.
+bool nn_neuron_set_act_func(NNNeuron *neuron, NNActFuncScalar act_func, NNError *error);
 
 // nn_neuron_compute computes the given neuron and returns the output.
 float nn_neuron_compute(const NNNeuron *neuron, const float inputs[NN_NEURON_MAX_WEIGHTS], NNError *error);
