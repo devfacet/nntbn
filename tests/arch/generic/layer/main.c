@@ -77,7 +77,7 @@ int main() {
                 {-0.3f, 0.4f, 0.2f, -0.5f},
             },
             .biases = {0.5f, -0.1f, 0.2f},
-            .dot_product_func = nn_dot_product,
+            .dot_product_func = nn_dot_prod,
             .act_func_scalar = nn_act_func_identity,
             .batch_size = 2,
             .inputs = {
@@ -100,7 +100,7 @@ int main() {
                 {-0.3f, 0.4f, 0.2f, -0.5f},
             },
             .biases = {0.5f, -0.1f, 0.2f},
-            .dot_product_func = nn_dot_product,
+            .dot_product_func = nn_dot_prod,
             .act_func_scalar = nn_act_func_relu,
             .batch_size = 2,
             .inputs = {
@@ -123,7 +123,7 @@ int main() {
                 {-0.3f, 0.4f, 0.2f, -0.5f},
             },
             .biases = {0.5f, -0.1f, 0.2f},
-            .dot_product_func = nn_dot_product,
+            .dot_product_func = nn_dot_prod,
             .act_func_vector = nn_act_func_softmax,
             .batch_size = 2,
             .inputs = {
@@ -146,7 +146,7 @@ int main() {
                 {0.4f, 0.1f, -0.4f, 0.6f},
             },
             .biases = {1.0f, 0.5f, -0.2f},
-            .dot_product_func = nn_dot_product,
+            .dot_product_func = nn_dot_prod,
             .act_func_scalar = nn_act_func_identity,
             .batch_size = 2,
             .inputs = {
@@ -169,7 +169,7 @@ int main() {
                 {0.4f, 0.1f, -0.4f, 0.6f},
             },
             .biases = {1.0f, 0.5f, -0.2f},
-            .dot_product_func = nn_dot_product,
+            .dot_product_func = nn_dot_prod,
             .act_func_scalar = nn_act_func_relu,
             .batch_size = 2,
             .inputs = {
@@ -192,7 +192,7 @@ int main() {
                 {0.4f, 0.1f, -0.4f, 0.6f},
             },
             .biases = {1.0f, 0.5f, -0.2f},
-            .dot_product_func = nn_dot_product,
+            .dot_product_func = nn_dot_prod,
             .act_func_vector = nn_act_func_softmax,
             .batch_size = 2,
             .inputs = {
@@ -215,7 +215,7 @@ int main() {
                 {0.1f, 0.4f, 0.2f, -0.2f},
             },
             .biases = {0.2f, -0.3f, 0.4f},
-            .dot_product_func = nn_dot_product,
+            .dot_product_func = nn_dot_prod,
             .act_func_scalar = nn_act_func_identity,
             .batch_size = 3,
             .inputs = {
@@ -240,7 +240,7 @@ int main() {
                 {0.1f, 0.4f, 0.2f, -0.2f},
             },
             .biases = {0.2f, -0.3f, 0.4f},
-            .dot_product_func = nn_dot_product,
+            .dot_product_func = nn_dot_prod,
             .act_func_vector = nn_act_func_softmax,
             .batch_size = 3,
             .inputs = {
@@ -265,7 +265,7 @@ int main() {
                 {0.1f, 0.4f, 0.2f, -0.2f},
             },
             .biases = {0.2f, -0.3f, 0.4f},
-            .dot_product_func = nn_dot_product,
+            .dot_product_func = nn_dot_prod,
             .act_func_scalar = nn_act_func_relu,
             .batch_size = 3,
             .inputs = {

@@ -68,6 +68,6 @@ int main() {
         },
 
     };
-    run_test_cases(test_cases, N_TEST_CASES, "nn_dot_product", nn_dot_product);
+    run_test_cases(test_cases, N_TEST_CASES, "nn_dot_prod", nn_dot_prod);
     return 0;
 }

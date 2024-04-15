@@ -26,11 +26,11 @@ int main(int argc, char *argv[]) {
     // Benchmark
     for (int i = 0; i < n_runs; ++i) {
         clock_gettime(CLOCK_MONOTONIC, &start);
-        nn_dot_product(a, b, n_vectors);
+        nn_dot_prod(a, b, n_vectors);
         clock_gettime(CLOCK_MONOTONIC, &end);
         total_time += nn_timespec_diff_ns(&start, &end);
     }
-    printf("avg_time_ns=%lld total_time_ms=%lld info=nn_dot_product\n", total_time / n_runs, total_time / 1000000);
+    printf("avg_time_ns=%lld total_time_ms=%lld info=nn_dot_prod\n", total_time / n_runs, total_time / 1000000);
 
     return 0;
 }
