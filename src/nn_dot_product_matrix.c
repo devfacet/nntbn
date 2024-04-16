@@ -1,4 +1,3 @@
-#define NN_DOT_PRODUCT_MATRIX_C
 #include "nn_dot_product_matrix.h"
 #include "nn_debug.h"
 #include <stddef.h>

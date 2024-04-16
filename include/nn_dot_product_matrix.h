@@ -14,9 +14,9 @@
 #define NN_MATRIX_MAX_COLS 3
 #endif
 
-// NNDotProductMatrixFunction represents a function that calculates
+// NNDotProdMatrixFunc represents a function that calculates
 // the dot product of two matrices.
-typedef void (*NNDotProductMatrixFunction)(float result[NN_MATRIX_MAX_ROWS][NN_MATRIX_MAX_COLS], const float a[NN_MATRIX_MAX_ROWS][NN_MATRIX_MAX_COLS], const float b[NN_MATRIX_MAX_ROWS][NN_MATRIX_MAX_COLS]);
+typedef void (*NNDotProdMatrixFunc)(float result[NN_MATRIX_MAX_ROWS][NN_MATRIX_MAX_COLS], const float a[NN_MATRIX_MAX_ROWS][NN_MATRIX_MAX_COLS], const float b[NN_MATRIX_MAX_ROWS][NN_MATRIX_MAX_COLS]);
 
 // nn_dot_product_matrix calculates the dot product of two square
 // matrices.

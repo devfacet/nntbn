@@ -16,13 +16,13 @@ typedef struct {
     float a[NN_MATRIX_MAX_ROWS][NN_MATRIX_MAX_COLS];
     float b[NN_MATRIX_MAX_ROWS][NN_MATRIX_MAX_COLS];
     float bias;
-    NNDotProductMatrixFunction dot_product_matrix_func;
+    NNDotProdMatrixFunc dot_product_matrix_func;
     float output_tolerance;
     float expected_output[NN_MATRIX_MAX_ROWS][NN_MATRIX_MAX_COLS];
 } TestCase;
 
 // run_test_cases runs the test cases.
-void run_test_cases(TestCase *test_cases, int n_cases, char *info, NNDotProductMatrixFunction dot_product_matrix_func) {
+void run_test_cases(TestCase *test_cases, int n_cases, char *info, NNDotProdMatrixFunc dot_product_matrix_func) {
     for (int i = 0; i < n_cases; ++i) {
         TestCase tc = test_cases[i];
 
