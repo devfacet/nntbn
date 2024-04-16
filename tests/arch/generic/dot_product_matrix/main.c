@@ -13,12 +13,12 @@
 
 // TestCase defines a single test case.
 typedef struct {
-    float a[MATRIX_MAX_ROWS][MATRIX_MAX_COLS];
-    float b[MATRIX_MAX_ROWS][MATRIX_MAX_COLS];
+    float a[NN_MATRIX_MAX_ROWS][NN_MATRIX_MAX_COLS];
+    float b[NN_MATRIX_MAX_ROWS][NN_MATRIX_MAX_COLS];
     float bias;
     NNDotProductMatrixFunction dot_product_matrix_func;
     float output_tolerance;
-    float expected_output[MATRIX_MAX_ROWS][MATRIX_MAX_COLS];
+    float expected_output[NN_MATRIX_MAX_ROWS][NN_MATRIX_MAX_COLS];
 } TestCase;
 
 // run_test_cases runs the test cases.
@@ -26,19 +26,19 @@ void run_test_cases(TestCase *test_cases, int n_cases, char *info, NNDotProductM
     for (int i = 0; i < n_cases; ++i) {
         TestCase tc = test_cases[i];
 
-        float output[MATRIX_MAX_ROWS][MATRIX_MAX_COLS];
+        float output[NN_MATRIX_MAX_ROWS][NN_MATRIX_MAX_COLS];
 
         NN_DEBUG_PRINT(5, "A:\n");
-        for (int i = 0; i < MATRIX_MAX_ROWS; i++) {
-            for (int j = 0; j < MATRIX_MAX_COLS; j++) {
+        for (int i = 0; i < NN_MATRIX_MAX_ROWS; i++) {
+            for (int j = 0; j < NN_MATRIX_MAX_COLS; j++) {
                 NN_DEBUG_PRINT(5, " %f", tc.a[i][j]);
             }
             NN_DEBUG_PRINT(5, "\n");
         }
 
         NN_DEBUG_PRINT(5, "B:\n");
-        for (int i = 0; i < MATRIX_MAX_ROWS; i++) {
-            for (int j = 0; j < MATRIX_MAX_COLS; j++) {
+        for (int i = 0; i < NN_MATRIX_MAX_ROWS; i++) {
+            for (int j = 0; j < NN_MATRIX_MAX_COLS; j++) {
                 NN_DEBUG_PRINT(5, " %f", tc.b[i][j]);
             }
             NN_DEBUG_PRINT(5, "\n");
@@ -47,15 +47,15 @@ void run_test_cases(TestCase *test_cases, int n_cases, char *info, NNDotProductM
         dot_product_matrix_func(output, tc.a, tc.b);
             
         NN_DEBUG_PRINT(5, "C:\n");
-        for (int i = 0; i < MATRIX_MAX_ROWS; i++) {
-            for (int j = 0; j < MATRIX_MAX_COLS; j++) {
+        for (int i = 0; i < NN_MATRIX_MAX_ROWS; i++) {
+            for (int j = 0; j < NN_MATRIX_MAX_COLS; j++) {
                 NN_DEBUG_PRINT(5, " %f", tc.expected_output[i][j]);
             }
             NN_DEBUG_PRINT(5, "\n");
         }
 
-        for (int m = 0; m < MATRIX_MAX_ROWS; m++) {
-            for (int n = 0; n < MATRIX_MAX_COLS; n++) {
+        for (int m = 0; m < NN_MATRIX_MAX_ROWS; m++) {
+            for (int n = 0; n < NN_MATRIX_MAX_COLS; n++) {
                 assert(isnan(output[m][n]) == false);
                 assert(fabs(output[m][n] - tc.expected_output[m][n]) < tc.output_tolerance);
             }
