@@ -10,7 +10,9 @@ void nn_dot_product_matrix(const float a[NN_MATRIX_MAX_ROWS][NN_MATRIX_MAX_COLS]
 
     // Initialize the result matrix.
     for (int i = 0; i < NN_MATRIX_MAX_ROWS; i++) {
-        memset(&output[i], 0, NN_MATRIX_MAX_COLS * sizeof(float));
+        for (int j = 0; j < NN_MATRIX_MAX_COLS; j++) {
+            output[i][j] = 0.0f;
+        }
     }
 
     // Multiply two square matrices.
