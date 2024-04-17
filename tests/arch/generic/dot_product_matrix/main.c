@@ -46,7 +46,15 @@ void run_test_cases(TestCase *test_cases, int n_cases, char *info, NNDotProdMatr
 
         dot_product_matrix_func(tc.a, tc.b, output);
             
-        NN_DEBUG_PRINT(5, "C:\n");
+        NN_DEBUG_PRINT(5, "Output:\n");
+        for (int i = 0; i < NN_MATRIX_MAX_ROWS; i++) {
+            for (int j = 0; j < NN_MATRIX_MAX_COLS; j++) {
+                NN_DEBUG_PRINT(5, " %f", output[i][j]);
+            }
+            NN_DEBUG_PRINT(5, "\n");
+        }
+
+        NN_DEBUG_PRINT(5, "Expected:\n");
         for (int i = 0; i < NN_MATRIX_MAX_ROWS; i++) {
             for (int j = 0; j < NN_MATRIX_MAX_COLS; j++) {
                 NN_DEBUG_PRINT(5, " %f", tc.expected_output[i][j]);
