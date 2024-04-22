@@ -12,9 +12,6 @@
 
 // TestCase defines a single test case.
 typedef struct {
-    float *a;
-    int a_rows;
-    int a_cols;
     float *b;
     int b_rows;
     int b_cols;
@@ -24,6 +21,7 @@ typedef struct {
     float *expected_output;
     int expected_output_rows;
     int expected_output_cols;
+    NNMatrix matrix_a;
 } TestCase;
 
 // run_test_cases runs the test cases.
@@ -31,12 +29,12 @@ void run_test_cases(TestCase *test_cases, int n_cases, char *info, NNDotProdMatr
     for (int i = 0; i < n_cases; ++i) {
         TestCase tc = test_cases[i];
 
-        float output[tc.a_rows * tc.b_cols];
+        float output[tc.matrix_a.rows * tc.b_cols];
 
         NN_DEBUG_PRINT(5, "A:\n");
-        for (int i = 0; i < tc.a_rows; i++) {
-            for (int j = 0; j < tc.a_cols; j++) {
-                NN_DEBUG_PRINT(5, " %f", tc.a[i * tc.a_cols + j]);
+        for (int i = 0; i < tc.matrix_a.rows; i++) {
+            for (int j = 0; j < tc.matrix_a.cols; j++) {
+                NN_DEBUG_PRINT(5, " %f", tc.matrix_a.data[i * tc.matrix_a.cols + j]);
             }
             NN_DEBUG_PRINT(5, "\n");
         }
@@ -49,10 +47,10 @@ void run_test_cases(TestCase *test_cases, int n_cases, char *info, NNDotProdMatr
             NN_DEBUG_PRINT(5, "\n");
         }
 
-        dot_product_matrix_func(tc.a, tc.a_rows, tc.a_cols, tc.b, tc.b_cols, output);
+        dot_product_matrix_func(&tc.matrix_a, tc.b, tc.b_cols, output);
             
         NN_DEBUG_PRINT(5, "Output:\n");
-        for (int i = 0; i < tc.a_rows; i++) {
+        for (int i = 0; i < tc.matrix_a.rows; i++) {
             for (int j = 0; j < tc.b_cols; j++) {
                 NN_DEBUG_PRINT(5, " %f", output[i * tc.b_cols + j]);
             }
@@ -67,7 +65,7 @@ void run_test_cases(TestCase *test_cases, int n_cases, char *info, NNDotProdMatr
             NN_DEBUG_PRINT(5, "\n");
         }
 
-        for (int i = 0; i < tc.a_rows; i++) {
+        for (int i = 0; i < tc.matrix_a.rows; i++) {
             for (int j = 0; j < tc.b_cols; j++) {
                 assert(isnan(output[i * tc.b_cols + j]) == false);
                 assert(fabs(output[i * tc.b_cols + j] - tc.expected_output[i * tc.b_cols + j]) < tc.output_tolerance);
@@ -83,9 +81,11 @@ int main() {
     TestCase test_cases[N_TEST_CASES] = {
         // a is a 1x1 square matrix and b is a square 1x1 matrix
         {
-            .a = (float[]){ 1 },
-            .a_rows = 1,
-            .a_cols = 1,
+            .matrix_a = {
+                .rows = 1,
+                .cols = 1,
+                .data = (float[]){ 1 },
+            },
             .b = (float[]){ 1 },
             .b_rows = 1,
             .b_cols = 1,
@@ -97,13 +97,15 @@ int main() {
 
         // a is a 3x3 square matrix and b is a square 3x3 matrix; both consist of all zeros
         {
-            .a = (float[]){
-                0, 0, 0,
-                0, 0, 0,
-                0, 0, 0,
+            .matrix_a = {
+                .rows = 3,
+                .cols = 3,
+                .data = (float[]){
+                    0, 0, 0,
+                    0, 0, 0,
+                    0, 0, 0,
+                },
             },
-            .a_rows = 3,
-            .a_cols = 3,
             .b = (float[]){
                 0, 0, 0,
                 0, 0, 0,
@@ -123,13 +125,15 @@ int main() {
 
         // a is a 3x3 square matrix and b is a square 3x3 matrix
         {
-            .a = (float[]){
-                 1, 5, 2,
-                -1, 0, 1,
-                 3, 2, 4,
+            .matrix_a = {
+                .rows = 3,
+                .cols = 3,
+                .data = (float[]){
+                     1, 5, 2,
+                    -1, 0, 1,
+                     3, 2, 4,
+                },
             },
-            .a_rows = 3,
-            .a_cols = 3,
             .b = (float[]){
                  6, 1, 3,
                 -1, 1, 2,
@@ -149,13 +153,15 @@ int main() {
 
         // a is a 3x2 matrix and b is a 2x2 square matrix
         {
-            .a = (float[]){
-                 3, 0,
-                -1, 2,
-                 1, 1,
+            .matrix_a = {
+                .rows = 3,
+                .cols = 2,
+                .data = (float[]){
+                     3, 0,
+                    -1, 2,
+                     1, 1,
+                },
             },
-            .a_rows = 3,
-            .a_cols = 2,
             .b = (float[]){
                  4, -1,
                  0,  2,
@@ -174,12 +180,14 @@ int main() {
 
         // a is a 2x2 matrix and b is a 2x1 square matrix
         {
-            .a = (float[]){
-                 1, 2,
-                 3, 4,
+            .matrix_a = {
+                .rows = 2,
+                .cols = 2,
+                .data = (float[]){
+                    1, 2,
+                    3, 4,
+                },
             },
-            .a_rows = 2,
-            .a_cols = 2,
             .b = (float[]){
                  5,
                  6,
