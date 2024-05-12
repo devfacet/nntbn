@@ -15,7 +15,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 FROM base as build
 COPY . /nn
 WORKDIR /nn
-RUN make build-artifacts PREFIX=tests/arch/generic LDFLAGS="-lm"
 
 ENTRYPOINT ["/bin/bash", "-c"]
 CMD ["/bin/bash"]
