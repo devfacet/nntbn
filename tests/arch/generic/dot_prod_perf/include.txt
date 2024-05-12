@@ -1,0 +1,5 @@
+src/nn_app.c
+src/nn_config.c
+src/nn_dot_prod.c
+src/nn_error.c
+src/nn_test.c

@@ -85,18 +85,22 @@ jobs:
       - name: Test
         run: |
           if [ "${{ matrix.test }}" == "arm-neon" ]; then
-            TESTS=arch/arm/neon/dot_product_perf,arch/arm/neon/neuron,arch/arm/neon/neuron_perf
+            if [ "${{ matrix.tag }}" == "nntbn:armv7-neon" ]; then
+              TESTS="make test ARCH=arm FILTERS=neon LDFLAGS='-lm' CFLAGS='-mfpu=neon-vfpv4'"
+            else
+              TESTS="make test ARCH=arm FILTERS=neon LDFLAGS='-lm'"
+            fi
           elif [ "${{ matrix.test }}" == "arm-cmsis-dsp" ]; then
-            TESTS=arch/arm/cmsis-dsp/dot_product_perf,arch/arm/cmsis-dsp/neuron,arch/arm/cmsis-dsp/neuron_perf
+            TESTS="make test ARCH=arm FILTERS=cmsis-dsp LDFLAGS='-lm'"
           elif [ "${{ matrix.test }}" == "amd64-generic" ]; then
-            TESTS=arch/generic/dot_product,arch/generic/dot_product_perf,arch/generic/layer,arch/generic/layer_multi,arch/generic/neuron,arch/generic/neuron_perf
+            TESTS="make test ARCH=generic LDFLAGS='-lm'"
           else
             echo "unknown test"
             exit 1
           fi
-          IFS=',' read -ra TESTS <<< "$TESTS"
+          IFS='|' read -ra TESTS <<< "$TESTS"
           for TEST in "${TESTS[@]}"; do
             echo "running ${TEST}"
-            docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} "/nn/build/tests/${TEST}"
+            docker run --platform ${{ matrix.platform }} ${{ matrix.tag }} "${TEST}"
             echo " "
           done

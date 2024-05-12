@@ -2,65 +2,131 @@
 #define NN_LAYER_H
 
 #include "nn_activation.h"
-#include "nn_dot_product.h"
+#include "nn_dot_prod.h"
 #include "nn_error.h"
+#include "nn_mat_mul.h"
+#include "nn_mat_transpose.h"
+#include "nn_tensor.h"
 #include <math.h>
 #include <stdbool.h>
 #include <stddef.h>
 
-// M_PI is not defined in some compilers.
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
+/**
+ * @brief Represents flags that can be set on a neural network layer.
+ */
+typedef enum {
+    NN_LAYER_FLAG_NONE = 0x00,                   // no flags set
+    NN_LAYER_FLAG_INIT = 0x01,                   // initialized
+    NN_LAYER_FLAG_WEIGHTS_SET = 0x02,            // weights set
+    NN_LAYER_FLAG_BIASES_SET = 0x04,             // biases set
+    NN_LAYER_FLAG_FORWARD_READY = 0x08,          // ready for forward pass
+    NN_LAYER_FLAG_MAT_MUL_FUNC_SET = 0x10,       // matrix multiplication function set
+    NN_LAYER_FLAG_MAT_TRANSPOSE_FUNC_SET = 0x20, // matrix transpose function set
+    NN_LAYER_FLAG_ACT_FUNC_SET = 0x40,           // activation function set
+    NN_LAYER_FLAG_ACT_FUNC_SCALAR = 0x80,        // scalar activation function set
+    NN_LAYER_FLAG_ACT_FUNC_TENSOR = 0x100        // tensor activation function set
+} NNLayerFlags;
 
-// NN_LAYER_MAX_INPUT_SIZE defines the maximum input size a layer can have.
-#ifndef NN_LAYER_MAX_INPUT_SIZE
-#define NN_LAYER_MAX_INPUT_SIZE 64
-#endif
-
-// NN_LAYER_MAX_OUTPUT_SIZE defines the maximum output size a layer can have.
-#ifndef NN_LAYER_MAX_OUTPUT_SIZE
-#define NN_LAYER_MAX_OUTPUT_SIZE 64
-#endif
-
-// NN_LAYER_MAX_BIASES defines the maximum number of biases a layer can have.
-#ifndef NN_LAYER_MAX_BIASES
-#define NN_LAYER_MAX_BIASES 64
-#endif
-
-// NN_LAYER_MAX_BATCH_SIZE defines the maximum batch size a layer can have.
-#ifndef NN_LAYER_MAX_BATCH_SIZE
-#define NN_LAYER_MAX_BATCH_SIZE 32
-#endif
-
-// NNLayer represents a single layer in a neural network.
+/**
+ * @brief Represents a neural network layer.
+ *
+ * @param flags The flags set on the layer.
+ * @param input_size The number of inputs to the layer.
+ * @param output_size The number of outputs from the layer.
+ * @param mat_mul_func The matrix multiplication function.
+ * @param mat_transpose_func The matrix transpose function.
+ * @param act_func The activation function.
+ * @param weights The weights of the layer.
+ * @param biases The biases of the layer.
+ *
+ * @note Use the `nn_layer_init` function to create and `nn_layer_destroy` to destroy.
+ */
 typedef struct {
+    NNLayerFlags flags;
     size_t input_size;
     size_t output_size;
-    float weights[NN_LAYER_MAX_OUTPUT_SIZE][NN_LAYER_MAX_INPUT_SIZE];
-    float biases[NN_LAYER_MAX_BIASES];
-    NNDotProdFunc dot_prod_func;
+    NNMatMulFunc mat_mul_func;
+    NNMatTransposeFunc mat_transpose_func;
+    NNActFunc act_func;
+    NNTensor *weights;
+    NNTensor *biases;
+
 } NNLayer;
 
-// nn_layer_init initializes a layer with the given arguments.
-bool nn_layer_init(NNLayer *layer, size_t input_size, size_t output_size, NNError *error);
+/**
+ * @brief Initializes a new neural network layer.
+ *
+ * @param input_size The number of inputs to the layer.
+ * @param output_size The number of outputs from the layer.
+ * @param error The error instance to set if an error occurs.
+ *
+ * @return The pointer to the newly created layer instance or NULL if an error occurs.
+ */
+NNLayer *nn_layer_init(size_t input_size, size_t output_size, NNError *error);
 
-// nn_layer_init_weights_gaussian initializes the weights of the layer with a Gaussian distribution.
-bool nn_layer_init_weights_gaussian(NNLayer *layer, float scale, NNError *error);
+/**
+ * @brief Sets the weights for the specified layer.
+ *
+ * @param layer The layer instance.
+ * @param weights The weights to set.
+ * @param error The error instance to set if an error occurs.
+ */
+bool nn_layer_set_weights(NNLayer *layer, const NNTensor *weights, NNError *error);
 
-// nn_layer_init_biases_zeros initializes the biases of the layer to zero.
-bool nn_layer_init_biases_zeros(NNLayer *layer, NNError *error);
+/**
+ * @brief Sets the biases for the specified layer.
+ *
+ * @param layer The layer instance.
+ * @param biases The biases to set.
+ * @param error The error instance to set if an error occurs.
+ */
+bool nn_layer_set_biases(NNLayer *layer, const NNTensor *biases, NNError *error);
 
-// nn_layer_set_weights sets the weights of the given layer.
-bool nn_layer_set_weights(NNLayer *layer, const float weights[NN_LAYER_MAX_OUTPUT_SIZE][NN_LAYER_MAX_INPUT_SIZE], NNError *error);
+/**
+ * @brief Sets the matrix multiplication function for the specified layer.
+ *
+ * @param layer The layer instance.
+ * @param mat_mul_func The matrix multiplication function to set.
+ * @param error The error instance to set if an error occurs.
+ */
+bool nn_layer_set_mat_mul_func(NNLayer *layer, NNMatMulFunc mat_mul_func, NNError *error);
 
-// nn_layer_set_biases sets the biases of the given layer.
-bool nn_layer_set_biases(NNLayer *layer, const float biases[NN_LAYER_MAX_BIASES], NNError *error);
+/**
+ * @brief Sets the matrix transpose function for the specified layer.
+ *
+ * @param layer The layer instance.
+ * @param mat_transpose_func The matrix transpose function to set.
+ * @param error The error instance to set if an error occurs.
+ */
+bool nn_layer_set_mat_transpose_func(NNLayer *layer, NNMatTransposeFunc mat_transpose_func, NNError *error);
 
-// nn_layer_set_dot_prod_func sets the dot product function of the given layer.
-bool nn_layer_set_dot_prod_func(NNLayer *layer, NNDotProdFunc dot_prod_func, NNError *error);
+/**
+ * @brief Sets the activation function for the specified layer.
+ *
+ * @param layer The layer instance.
+ * @param act_func_type The type of activation function.
+ * @param act_func The activation function to set.
+ * @param error The error instance to set if an error occurs.
+ */
+bool nn_layer_set_act_func(NNLayer *layer, NNActFuncType act_func_type, NNActFunc act_func, NNError *error);
 
-// nn_layer_forward computes the given layer with the given inputs and stores the result in outputs.
-bool nn_layer_forward(const NNLayer *layer, const float inputs[NN_LAYER_MAX_BATCH_SIZE][NN_LAYER_MAX_INPUT_SIZE], float outputs[NN_LAYER_MAX_BATCH_SIZE][NN_LAYER_MAX_OUTPUT_SIZE], size_t batch_size, NNError *error);
+/**
+ * @brief Computes the forward pass of the given layer with the given inputs.
+ *
+ * @param layer The layer instance.
+ * @param inputs The inputs to the layer.
+ * @param outputs The tensor instance to set the outputs to.
+ * @param error The error instance to set if an error occurs.
+ *
+ * @return True or false
+ */
+bool nn_layer_forward(const NNLayer *layer, const NNTensor *inputs, NNTensor *outputs, NNError *error);
+
+/**
+ * @brief Destroys the specified layer.
+ *
+ * @param layer The layer instance to destroy.
+ */
+void nn_layer_destroy(NNLayer *layer);
 
 #endif // NN_LAYER_H

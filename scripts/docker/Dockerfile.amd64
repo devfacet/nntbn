@@ -4,11 +4,15 @@
 # Run:
 #   docker run --rm -it --platform linux/amd64 nntbn:amd64 make test ARCH=generic LDFLAGS="-lm"
 
-FROM ubuntu:latest
+# Base
+FROM ubuntu:latest as base
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     clang \
     lld
+
+# Build
+FROM base as build
 COPY . /nn
 WORKDIR /nn
 

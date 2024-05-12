@@ -26,19 +26,21 @@ git submodule update --init
 
 ## Usage
 
-### Build and run examples
-
-```shell
-make build-examples ARCH=generic
-make run-examples ARCH=generic
-```
-
 ## Test
 
 ```shell
+# Test the default architecture (generic)
 make test
+
+# Test a specific architecture
 make test ARCH=generic
-make test ARCH=arm TECH=neon,cmsis-dsp
+make test ARCH=arm
+
+# Test a specific architecture with filters
+make test ARCH=generic FILTERS=dot_prod
+make test ARCH=arm FILTERS=neon,cmsis-dsp
+
+# Test all architectures
 make test-all
 ```
 

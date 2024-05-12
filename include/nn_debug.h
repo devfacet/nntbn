@@ -4,7 +4,13 @@
 #include "nn_config.h"
 #include <stdio.h>
 
-// NN_DEBUG_PRINT defines a macro for printing debug messages.
+/**
+ * @brief Prints a debug message.
+ *
+ * @param level The debug level.
+ * @param fmt The format string.
+ * @param ... The arguments.
+ */
 #define NN_DEBUG_PRINT(level, fmt, ...)          \
     do {                                         \
         if (nn_get_debug_level() >= level)       \

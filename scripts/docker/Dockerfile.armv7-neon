@@ -2,10 +2,10 @@
 # Build:
 #   docker buildx build --platform linux/arm/v7 -f scripts/docker/Dockerfile.armv7-neon -t nntbn:armv7-neon . --load
 # Run:
-#   docker run --rm -it --platform linux/arm/v7 nntbn:armv7-neon /nn/build/tests/arch/arm/neon/neuron
+#   docker run --rm -it --platform linux/arm/v7 nntbn:armv7-neon /nn/build/tests/arch/arm/neon/dot_prod_perf
 
-# Build
-FROM arm32v7/ubuntu:latest as build
+# Base
+FROM arm32v7/ubuntu:latest as base
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
@@ -13,14 +13,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     lld \
     gcc-arm-none-eabi \
     libnewlib-arm-none-eabi
+
+# Build
+FROM base as build
 COPY . /nn
 WORKDIR /nn
-RUN make build-tests ARCH=arm TECH=neon LDFLAGS="-lm" CFLAGS="-mfpu=neon-vfpv4"
-
-# Runtime
-FROM arm32v7/ubuntu:latest
-WORKDIR /nn
-COPY --from=build /nn /nn
 
 ENTRYPOINT ["/bin/bash", "-c"]
 CMD ["/bin/bash"]

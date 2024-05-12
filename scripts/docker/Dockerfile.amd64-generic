@@ -2,22 +2,19 @@
 # Build:
 #   docker buildx build --platform linux/amd64 -f scripts/docker/Dockerfile.amd64-generic -t nntbn:amd64-generic . --load
 # Run:
-#   docker run --rm -it --platform linux/amd64 nntbn:amd64-generic /nn/build/tests/arch/generic/neuron
+#   docker run --rm -it --platform linux/amd64 nntbn:amd64-generic /nn/build/tests/arch/generic/dot_prod_perf
 
-# Build
-FROM ubuntu:latest as build
+# Base
+FROM ubuntu:latest as base
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     clang \
     lld
+
+# Build
+FROM base as build
 COPY . /nn
 WORKDIR /nn
-RUN make build-tests ARCH=generic LDFLAGS="-lm"
-
-# Runtime
-FROM ubuntu:latest
-WORKDIR /nn
-COPY --from=build /nn /nn
 
 ENTRYPOINT ["/bin/bash", "-c"]
 CMD ["/bin/bash"]

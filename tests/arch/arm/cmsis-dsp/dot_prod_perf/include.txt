@@ -1,0 +1,8 @@
+src/nn_app.c
+src/nn_config.c
+src/nn_error.c
+src/nn_test.c
+src/arch/arm/cmsis-dsp/nn_dot_prod.c
+-Ilib/CMSIS_6/CMSIS/Core/Include
+-Ilib/CMSIS-DSP/Include
+lib/CMSIS-DSP/Source/BasicMathFunctions/arm_dot_prod_f32.c
