@@ -85,11 +85,15 @@ jobs:
       - name: Test
         run: |
           if [ "${{ matrix.test }}" == "arm-neon" ]; then
-            TESTS="make test ARCH=arm FILTERS=neon LDFLAGS=-lm"
+            if [ "${{ matrix.tag }}" == "nntbn:armv7-neon" ]; then
+              TESTS="make test ARCH=arm FILTERS=neon LDFLAGS='-lm' CFLAGS='-mfpu=neon-vfpv4'"
+            else
+              TESTS="make test ARCH=arm FILTERS=neon LDFLAGS='-lm'"
+            fi
           elif [ "${{ matrix.test }}" == "arm-cmsis-dsp" ]; then
-            TESTS="make test ARCH=arm FILTERS=cmsis-dsp LDFLAGS=-lm"
+            TESTS="make test ARCH=arm FILTERS=cmsis-dsp LDFLAGS='-lm'"
           elif [ "${{ matrix.test }}" == "amd64-generic" ]; then
-            TESTS="make test ARCH=generic LDFLAGS=-lm"
+            TESTS="make test ARCH=generic LDFLAGS='-lm'"
           else
             echo "unknown test"
             exit 1
