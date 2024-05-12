@@ -20,10 +20,5 @@ COPY . /nn
 WORKDIR /nn
 RUN make build-artifacts PREFIX=tests/arch/arm FILTERS=neon LDFLAGS="-lm" CFLAGS="-mfpu=neon-vfpv4"
 
-# Runtime
-FROM arm32v7/ubuntu:latest
-WORKDIR /nn
-COPY --from=build /nn /nn
-
 ENTRYPOINT ["/bin/bash", "-c"]
 CMD ["/bin/bash"]

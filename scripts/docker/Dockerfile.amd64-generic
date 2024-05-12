@@ -17,10 +17,5 @@ COPY . /nn
 WORKDIR /nn
 RUN make build-artifacts PREFIX=tests/arch/generic LDFLAGS="-lm"
 
-# Runtime
-FROM ubuntu:latest
-WORKDIR /nn
-COPY --from=build /nn /nn
-
 ENTRYPOINT ["/bin/bash", "-c"]
 CMD ["/bin/bash"]

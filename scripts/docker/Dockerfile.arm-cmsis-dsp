@@ -20,10 +20,5 @@ COPY . /nn
 WORKDIR /nn
 RUN make build-artifacts PREFIX=tests/arch/arm FILTERS=cmsis-dsp LDFLAGS="-lm"
 
-# Runtime
-FROM ubuntu:latest
-WORKDIR /nn
-COPY --from=build /nn /nn
-
 ENTRYPOINT ["/bin/bash", "-c"]
 CMD ["/bin/bash"]
