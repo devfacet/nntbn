@@ -4,40 +4,56 @@
 #include "nn_error.h"
 #include <stdbool.h>
 
+/**
+ * @brief Defines whether ARM NEON is available.
+ *
+ * @note Available for certain ARM architectures.
+ */
 #if defined(__ARM_NEON) || defined(__ARM_NEON__)
 #define NN_NEON_AVAILABLE 1
 #else
 #define NN_NEON_AVAILABLE 0
 #endif
 
+/**
+ * @brief Defines whether ARM CMSIS-DSP is available.
+ *
+ * @note Available for all ARM architectures.
+ */
 #if defined(__ARM_ARCH)
 #define NN_CMSIS_DSP_AVAILABLE 1
 #else
 #define NN_CMSIS_DSP_AVAILABLE 0
 #endif
 
-// nn_get_debug_level returns the debug level.
+/**
+ * @brief Returns the debug level.
+ *
+ * @return The debug level.
+ */
 int nn_get_debug_level();
 
-// nn_set_debug_level sets the debug level.
+/**
+ * @brief Sets the debug level.
+ *
+ * @param level The debug level.
+ *
+ * @return True or false.
+ */
 bool nn_set_debug_level(int level);
 
-// nn_neon_available returns whether ARM NEON is available.
+/**
+ * @brief Returns whether ARM NEON is available.
+ *
+ * @return True or false.
+ */
 bool nn_neon_available();
 
-// nn_get_use_neon returns the ARM NEON use flag.
-bool nn_get_use_neon();
-
-// nn_set_use_neon sets the ARM NEON use flag.
-bool nn_set_use_neon(bool flag, NNError *error);
-
-// nn_cmsis_dsp_available returns whether ARM CMSIS-DSP is available.
+/**
+ * @brief Returns whether ARM CMSIS-DSP is available.
+ *
+ * @return True or false.
+ */
 bool nn_cmsis_dsp_available();
-
-// nn_get_use_cmsis returns the ARM CMSIS-DSP flag.
-bool nn_get_use_cmsis();
-
-// nn_set_use_cmsis_dsp sets the ARM CMSIS-DSP flag.
-bool nn_set_use_cmsis_dsp(bool flag, NNError *error);
 
 #endif // NN_CONFIG_H

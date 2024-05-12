@@ -3,8 +3,6 @@ set -euo pipefail
 IFS=$'\n\t'
 
 # Init vars
-ARCH="${ARCH-}"
-TECH="${TECH-}"
 ARTIFACT="${ARTIFACT-}"
 CC="${CC:-clang}"
 CFLAGS_ARRAY=(-Wall -fdiagnostics-color=always -std=c99)
@@ -22,14 +20,8 @@ else
     LDFLAGS_ARRAY=()
 fi
 
-# If the ARCH environment variable is not set then
-if [ -z "$ARCH" ]; then
-    echo "invalid ARCH value"
-    exit 1
-fi
-
 # If the ARTIFACT environment variable is not set then
-if [ -z "$ARTIFACT" ] || [ "$ARTIFACT" = "examples/" ] || [ "$ARTIFACT" = "tests/" ]; then
+if [ -z "$ARTIFACT" ] ; then
     echo "invalid ARTIFACT value"
     exit 1
 fi
@@ -37,25 +29,19 @@ fi
 # Ensure that the build directory exists
 mkdir -p "$(pwd)/build/$(dirname "$ARTIFACT")"
 
-# Compile
-CC_PARTS=()
-# Convert comma-separated TECH to an array
-IFS=',' read -ra TECHS <<< "$TECH"
-for tech in "${TECHS[@]:-}"; do
-    if [ "$tech" = "neon" ]; then
-        # Arm NEON
-        CC_PARTS+=(src/arch/arm/neon/*.c)
-    fi
-    if [ "$tech" = "cmsis-dsp" ]; then
-        # Arm CMSIS-DSP
-        CC_PARTS+=(-Ilib/CMSIS_6/CMSIS/Core/Include -Ilib/CMSIS-DSP/Include lib/CMSIS-DSP/Source/BasicMathFunctions/arm_dot_prod_f32.c src/arch/arm/cmsis-dsp/*.c)
-    fi
-done
+# Read source files from includes.txt in the ARTIFACT directory
+SRC_FILES=()
+while IFS= read -r line; do
+    SRC_FILES+=("$line")
+done < "$(pwd)/$ARTIFACT/include.txt"
+
+# For debugging
+# CFLAGS_ARRAY+=(-E)
+# SRC_FILES=()
 
 COMPILE_CMD=("$CC" "${CFLAGS_ARRAY[@]}" \
     -Iinclude/ \
-    "${CC_PARTS[@]:-}" \
-    src/*.c \
+    "${SRC_FILES[@]:-}" \
     "$(pwd)/$ARTIFACT"/main.c \
     -o "$(pwd)/build/$ARTIFACT")
 

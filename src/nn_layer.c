@@ -1,131 +1,228 @@
 #include "nn_layer.h"
+#include "nn_error.h"
+#include "nn_mat_mul.h"
+#include "nn_mat_transpose.h"
+#include "nn_tensor.h"
 #include <math.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-// nn_layer_init initializes a layer with the given arguments.
-bool nn_layer_init(NNLayer *layer, size_t input_size, size_t output_size, NNError *error) {
-    nn_error_set(error, NN_ERROR_NONE, NULL);
+/**
+ * @brief Checks if the layer is ready for forward pass.
+ *
+ * @param layer The layer instance to check.
+ *
+ * @return True or false.
+ */
+static bool nn_layer_check_forward_ready(NNLayer *layer) {
     if (layer == NULL) {
-        nn_error_set(error, NN_ERROR_INVALID_INSTANCE, "layer is NULL");
         return false;
+    } else if (layer->flags & NN_LAYER_FLAG_FORWARD_READY) {
+        return true;
     }
-    if (input_size == 0) {
-        nn_error_set(error, NN_ERROR_INVALID_SIZE, "invalid input size");
-        return false;
+
+    int required_flags = NN_LAYER_FLAG_INIT;
+
+    if ((layer->flags & required_flags) == required_flags) {
+        layer->flags |= NN_LAYER_FLAG_FORWARD_READY;
+        return true;
     }
-    if (output_size == 0) {
-        nn_error_set(error, NN_ERROR_INVALID_SIZE, "invalid output size");
-        return false;
+
+    return false;
+}
+
+NNLayer *nn_layer_init(size_t input_size, size_t output_size, NNError *error) {
+    NNLayer *layer = (NNLayer *)malloc(sizeof(NNLayer));
+    if (!layer) {
+        nn_error_set(error, NN_ERROR_MEMORY_ALLOCATION, "could not allocate memory for the new layer");
+        return NULL;
     }
+
+    // Init the layer
+    layer->flags = NN_LAYER_FLAG_NONE;
     layer->input_size = input_size;
     layer->output_size = output_size;
 
-    return true;
+    // Init the weights
+    layer->weights = nn_tensor_init_NNTensor(2, (const size_t[]){output_size, input_size}, true, NULL, error); // initialized to 0
+    if (!layer->weights) {
+        nn_layer_destroy(layer);
+        nn_error_setf(error, NN_ERROR_MEMORY_ALLOCATION, "could create weights tensor: %s", error->message);
+        return NULL;
+    }
+
+    // Init the biases
+    layer->biases = nn_tensor_init_NNTensor(1, (const size_t[]){output_size}, true, NULL, error); // initialized to 0
+    if (!layer->biases) {
+        nn_layer_destroy(layer);
+        nn_error_setf(error, NN_ERROR_MEMORY_ALLOCATION, "could create biases tensor: %s", error->message);
+        return NULL;
+    }
+    layer->flags = NN_LAYER_FLAG_INIT;
+
+    return layer;
 }
 
-// nn_layer_init_weights_gaussian initializes the weights of the layer with a Gaussian distribution.
-bool nn_layer_init_weights_gaussian(NNLayer *layer, float scale, NNError *error) {
-    nn_error_set(error, NN_ERROR_NONE, NULL);
-    if (layer == NULL) {
-        nn_error_set(error, NN_ERROR_INVALID_INSTANCE, "layer is NULL");
+bool nn_layer_set_weights(NNLayer *layer, const NNTensor *weights, NNError *error) {
+    if (layer == NULL || !(layer->flags & NN_LAYER_FLAG_INIT)) {
+        nn_error_set(error, NN_ERROR_INVALID_ARGUMENT, "layer is not initialized");
+        return false;
+    } else if (weights == NULL || weights->data == NULL) {
+        nn_error_set(error, NN_ERROR_INVALID_ARGUMENT, "given weights are NULL");
+        return false;
+    } else if (!nn_tensor_set_NNTensor(layer->weights, NULL, 0, weights, error)) {
         return false;
     }
 
-    // Initialize weights with Gaussian random values scaled by 'scale'
-    for (size_t i = 0; i < layer->output_size; ++i) {
-        for (size_t j = 0; j < layer->input_size; ++j) {
-            float u1 = (float)rand() / (float)RAND_MAX;
-            float u2 = (float)rand() / (float)RAND_MAX;
-            float rand_std_normal = sqrt(-2.0 * log(u1)) * cos(2.0 * M_PI * u2); // Box-Muller transform
-            layer->weights[i][j] = scale * rand_std_normal;
+    // TODO: Check if there is a "better" way to set the dims and sizes
+    layer->weights->dims = weights->dims;
+    layer->weights->sizes = weights->sizes;
+
+    layer->flags |= NN_LAYER_FLAG_WEIGHTS_SET;
+    nn_layer_check_forward_ready(layer);
+
+    return true;
+}
+
+bool nn_layer_set_biases(NNLayer *layer, const NNTensor *biases, NNError *error) {
+    if (layer == NULL || !(layer->flags & NN_LAYER_FLAG_INIT)) {
+        nn_error_set(error, NN_ERROR_INVALID_ARGUMENT, "layer is not initialized");
+        return false;
+    } else if (biases == NULL || biases->data == NULL) {
+        nn_error_set(error, NN_ERROR_INVALID_ARGUMENT, "given biases are NULL");
+        return false;
+    } else if (!nn_tensor_set_NNTensor(layer->biases, NULL, 0, biases, error)) {
+        return false;
+    }
+    layer->flags |= NN_LAYER_FLAG_BIASES_SET;
+    nn_layer_check_forward_ready(layer);
+
+    return true;
+}
+
+bool nn_layer_set_mat_mul_func(NNLayer *layer, NNMatMulFunc mat_mul_func, NNError *error) {
+    if (layer == NULL || !(layer->flags & NN_LAYER_FLAG_INIT)) {
+        nn_error_set(error, NN_ERROR_INVALID_ARGUMENT, "layer is not initialized");
+        return false;
+    } else if (mat_mul_func == NULL) {
+        nn_error_set(error, NN_ERROR_INVALID_ARGUMENT, "matrix multiplication function is NULL");
+        return false;
+    }
+    layer->mat_mul_func = mat_mul_func;
+    layer->flags |= NN_LAYER_FLAG_MAT_MUL_FUNC_SET;
+    nn_layer_check_forward_ready(layer);
+
+    return true;
+}
+
+bool nn_layer_set_mat_transpose_func(NNLayer *layer, NNMatTransposeFunc mat_transpose_func, NNError *error) {
+    if (layer == NULL || !(layer->flags & NN_LAYER_FLAG_INIT)) {
+        nn_error_set(error, NN_ERROR_INVALID_ARGUMENT, "layer is not initialized");
+        return false;
+    } else if (mat_transpose_func == NULL) {
+        nn_error_set(error, NN_ERROR_INVALID_ARGUMENT, "matrix transpose function is NULL");
+        return false;
+    }
+    layer->mat_transpose_func = mat_transpose_func;
+    layer->flags |= NN_LAYER_FLAG_MAT_TRANSPOSE_FUNC_SET;
+    nn_layer_check_forward_ready(layer);
+
+    return true;
+}
+
+bool nn_layer_set_act_func(NNLayer *layer, NNActFuncType act_func_type, NNActFunc act_func, NNError *error) {
+    if (layer == NULL || !(layer->flags & NN_LAYER_FLAG_INIT)) {
+        nn_error_set(error, NN_ERROR_INVALID_ARGUMENT, "layer is not initialized");
+        return false;
+    }
+    layer->act_func = act_func;
+    layer->flags |= NN_LAYER_FLAG_ACT_FUNC_SET;
+    if (act_func_type == NN_ACT_FUNC_SCALAR) {
+        layer->flags |= NN_LAYER_FLAG_ACT_FUNC_SCALAR;
+    } else if (act_func_type == NN_ACT_FUNC_TENSOR) {
+        layer->flags |= NN_LAYER_FLAG_ACT_FUNC_TENSOR;
+    }
+    nn_layer_check_forward_ready(layer);
+
+    return true;
+}
+
+bool nn_layer_forward(const NNLayer *layer, const NNTensor *inputs, NNTensor *outputs, NNError *error) {
+    if (layer == NULL || !(layer->flags & NN_LAYER_FLAG_FORWARD_READY)) {
+        nn_error_set(error, NN_ERROR_INVALID_INSTANCE, "layer is not ready for forward pass");
+        return false;
+    } else if (inputs == NULL || outputs == NULL) {
+        nn_error_set(error, NN_ERROR_INVALID_INSTANCE, "inputs or outputs are NULL");
+        return false;
+    }
+
+    // Check if matrix multiplication function is set
+    if (layer->flags & NN_LAYER_FLAG_WEIGHTS_SET) {
+        if (layer->flags & NN_LAYER_FLAG_MAT_MUL_FUNC_SET) {
+            // Check if matrix transpose function is set
+            if (layer->flags & NN_LAYER_FLAG_MAT_TRANSPOSE_FUNC_SET) {
+                // Transpose weights
+                NNTensor *weights = nn_tensor_init_NNTensor(layer->weights->dims, layer->weights->sizes, true, NULL, error);
+                if (!weights) {
+                    return false;
+                }
+                if (!nn_mat_transpose(layer->weights, weights, error)) {
+                    return false;
+                }
+                // Perform matrix multiplication
+                if (!layer->mat_mul_func(inputs, weights, outputs, error)) {
+                    return false;
+                }
+            } else {
+                // Perform matrix multiplication
+                if (!layer->mat_mul_func(inputs, layer->weights, outputs, error)) {
+                    return false;
+                }
+            }
+        } else {
+            nn_error_set(error, NN_ERROR_INVALID_INSTANCE, "matrix multiplication function is not set");
+            return false;
+        }
+    } else {
+        // If weights are not set, just copy the inputs to the outputs
+        if (!nn_tensor_set_NNTensor(outputs, NULL, 0, inputs, error)) {
+            return false;
+        }
+    }
+
+    // Add biases
+    if (layer->flags & NN_LAYER_FLAG_BIASES_SET) {
+        size_t batch_size = outputs->sizes[0];
+        size_t sample_size = outputs->sizes[1];
+        for (size_t i = 0; i < batch_size; i++) {
+            for (size_t j = 0; j < sample_size; ++j) {
+                outputs->data[i * sample_size + j] += layer->biases->data[j];
+            }
+        }
+    }
+
+    // Apply activation function
+    if (layer->flags & NN_LAYER_FLAG_ACT_FUNC_SET) {
+        if (layer->flags & NN_LAYER_FLAG_ACT_FUNC_SCALAR) {
+            if (!nn_act_func_scalar_batch(layer->act_func.scalar_func, outputs, outputs, error)) {
+                return false;
+            }
+        } else if (layer->flags & NN_LAYER_FLAG_ACT_FUNC_TENSOR) {
+            if (!nn_act_func_tensor_batch(layer->act_func.tensor_func, outputs, outputs, error)) {
+                return false;
+            }
         }
     }
 
     return true;
 }
 
-// nn_layer_init_biases_zeros initializes the biases of the layer to zero.
-bool nn_layer_init_biases_zeros(NNLayer *layer, NNError *error) {
-    nn_error_set(error, NN_ERROR_NONE, NULL);
-    if (layer == NULL) {
-        nn_error_set(error, NN_ERROR_INVALID_INSTANCE, "layer is NULL");
-        return false;
+void nn_layer_destroy(NNLayer *layer) {
+    if (layer) {
+        nn_tensor_destroy_NNTensor(layer->weights);
+        nn_tensor_destroy_NNTensor(layer->biases);
+        free(layer);
     }
-
-    // Initialize biases to zero
-    for (size_t i = 0; i < layer->output_size; ++i) {
-        layer->biases[i] = 0.0;
-    }
-
-    return true;
-}
-
-// nn_layer_set_weights sets the weights of the given layer.
-bool nn_layer_set_weights(NNLayer *layer, const float weights[NN_LAYER_MAX_OUTPUT_SIZE][NN_LAYER_MAX_INPUT_SIZE], NNError *error) {
-    nn_error_set(error, NN_ERROR_NONE, NULL);
-    if (layer == NULL) {
-        nn_error_set(error, NN_ERROR_INVALID_INSTANCE, "layer is NULL");
-        return false;
-    }
-    for (size_t i = 0; i < layer->output_size; ++i) {
-        for (size_t j = 0; j < layer->input_size; ++j) {
-            layer->weights[i][j] = weights[i][j];
-        }
-    }
-
-    return true;
-}
-
-// nn_layer_set_biases sets the biases of the given layer.
-bool nn_layer_set_biases(NNLayer *layer, const float biases[NN_LAYER_MAX_BIASES], NNError *error) {
-    nn_error_set(error, NN_ERROR_NONE, NULL);
-    if (layer == NULL) {
-        nn_error_set(error, NN_ERROR_INVALID_INSTANCE, "layer is NULL");
-        return false;
-    }
-    for (size_t i = 0; i < layer->output_size; ++i) {
-        layer->biases[i] = biases[i];
-    }
-
-    return true;
-}
-
-// nn_layer_set_dot_prod_func sets the dot product function of the given layer.
-bool nn_layer_set_dot_prod_func(NNLayer *layer, NNDotProdFunc dot_prod_func, NNError *error) {
-    nn_error_set(error, NN_ERROR_NONE, NULL);
-    if (layer == NULL) {
-        nn_error_set(error, NN_ERROR_INVALID_INSTANCE, "layer is NULL");
-        return false;
-    }
-    layer->dot_prod_func = dot_prod_func;
-
-    return true;
-}
-
-// nn_layer_forward computes the given layer with the given inputs and stores the result in outputs.
-bool nn_layer_forward(const NNLayer *layer, const float inputs[NN_LAYER_MAX_BATCH_SIZE][NN_LAYER_MAX_INPUT_SIZE], float outputs[NN_LAYER_MAX_BATCH_SIZE][NN_LAYER_MAX_OUTPUT_SIZE], size_t batch_size, NNError *error) {
-    nn_error_set(error, NN_ERROR_NONE, NULL);
-    if (layer == NULL) {
-        nn_error_set(error, NN_ERROR_INVALID_INSTANCE, "layer is NULL");
-        return false;
-    } else if (batch_size == 0) {
-        nn_error_set(error, NN_ERROR_INVALID_SIZE, "invalid batch size");
-        return false;
-    } else if (layer->dot_prod_func == NULL) {
-        nn_error_set(error, NN_ERROR_INVALID_FUNCTION, "dot product function is NULL");
-        return false;
-    }
-
-    // Iterate over batch inputs
-    for (size_t i = 0; i < batch_size; ++i) {
-        // Iterate over output neurons
-        for (size_t j = 0; j < layer->output_size; ++j) {
-            outputs[i][j] = layer->dot_prod_func(inputs[i], layer->weights[j], layer->input_size) + layer->biases[j];
-        }
-    }
-
-    return true;
 }

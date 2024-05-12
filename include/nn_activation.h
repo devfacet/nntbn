@@ -1,40 +1,109 @@
-#ifndef NN_ACTIVATION_FUNCTION_H
-#define NN_ACTIVATION_FUNCTION_H
+#ifndef NN_ACTIVATION_H
+#define NN_ACTIVATION_H
 
 #include "nn_error.h"
+#include "nn_tensor.h"
 #include <stdbool.h>
 #include <stddef.h>
 
-#ifndef NN_AF_FORWARD_MAX_SIZE
-#define NN_AF_FORWARD_MAX_SIZE 64
-#endif
+/**
+ * @brief Represents a scalar activation function.
+ *
+ * @param n The input value.
+ *
+ * @return The output value.
+ */
+typedef NNTensorUnit (*NNActFuncScalar)(NNTensorUnit n);
 
-#ifndef NN_AF_VECTOR_MAX_SIZE
-#define NN_AF_VECTOR_MAX_SIZE 64
-#endif
+/**
+ * @brief Represents a tensor activation function.
+ *
+ * @param input The input tensor.
+ * @param output The output tensor.
+ * @param error The error instance to set if an error occurs.
+ *
+ * @return True if the operation was successful, false otherwise.
+ */
+typedef bool (*NNActFuncTensor)(const NNTensor *input, NNTensor *output, NNError *error);
 
-// NNActFuncScalar represents a scalar activation function.
-typedef float (*NNActFuncScalar)(float);
+/**
+ * @brief Represents the type of activation function.
+ */
+typedef enum {
+    NN_ACT_FUNC_SCALAR,
+    NN_ACT_FUNC_TENSOR
+} NNActFuncType;
 
-// NNActFuncVector represents a vector activation function.
-typedef bool (*NNActFuncVector)(const float input[NN_AF_VECTOR_MAX_SIZE], float output[NN_AF_VECTOR_MAX_SIZE], size_t input_size, NNError *error);
+/**
+ * @brief Represents the activation function.
+ */
+typedef union {
+    NNActFuncScalar scalar_func;
+    NNActFuncTensor tensor_func;
+} NNActFunc;
 
-// nn_act_func_forward_scalar computes the given activation function with the given input and stores the result in output.
-bool nn_act_func_forward_scalar(NNActFuncScalar act_func, const float input[NN_AF_FORWARD_MAX_SIZE], float output[NN_AF_FORWARD_MAX_SIZE], size_t input_size, NNError *error);
+/**
+ * @brief Returns the identity activation function result.
+ *
+ * @param n The input value.
+ *
+ * @return The input value.
+ *
+ * @note Implemented for testing and theoretical purposes. Not recommended for practical use.
+ */
+NNTensorUnit nn_act_func_identity(NNTensorUnit n);
 
-// nn_act_func_forward_vector computes the given activation function with the given input and stores the result in output.
-bool nn_act_func_forward_vector(NNActFuncVector act_func, const float input[NN_AF_FORWARD_MAX_SIZE], float output[NN_AF_FORWARD_MAX_SIZE], size_t input_size, NNError *error);
+/**
+ * @brief Returns the sigmoid activation function result.
+ *
+ * @param n The input value.
+ *
+ * @return Sigmoid of the input value.
+ */
+NNTensorUnit nn_act_func_sigmoid(NNTensorUnit n);
 
-// nn_act_func_identity returns x.
-float nn_act_func_identity(float x);
+/**
+ * @brief Returns the ReLU activation function result.
+ *
+ * @param n The input value.
+ *
+ * @return ReLU of the input value.
+ */
+NNTensorUnit nn_act_func_relu(NNTensorUnit n);
 
-// nn_act_func_sigmoid returns the sigmoid of x.
-float nn_act_func_sigmoid(float x);
+/**
+ * @brief Calculates the softmax of the input tensor and stores the result in the output tensor.
+ *
+ * @param input The input tensor.
+ * @param output The output tensor.
+ * @param error The error instance to set if an error occurs.
+ *
+ * @return True or false.
+ */
+bool nn_act_func_softmax(const NNTensor *input, NNTensor *output, NNError *error);
 
-// nn_act_func_relu returns the ReLU of x.
-float nn_act_func_relu(float x);
+/**
+ * @brief Calculates the scalar activation function result for each element in the input tensor and stores the result in the output tensor.
+ *
+ * @param act_func The scalar activation function.
+ * @param input The input tensor.
+ * @param output The output tensor.
+ * @param error The error instance to set if an error occurs.
+ *
+ * @return True or false.
+ */
+bool nn_act_func_scalar_batch(const NNActFuncScalar act_func, const NNTensor *input, NNTensor *output, NNError *error);
 
-// nn_act_func_softmax calculates the softmax of the input and stores the result in the output.
-bool nn_act_func_softmax(const float input[NN_AF_VECTOR_MAX_SIZE], float output[NN_AF_VECTOR_MAX_SIZE], size_t input_size, NNError *error);
+/**
+ * @brief Calculates the tensor activation function result for the input tensor and stores the result in the output tensor.
+ *
+ * @param act_func The tensor activation function.
+ * @param input The input tensor.
+ * @param output The output tensor.
+ * @param error The error instance to set if an error occurs.
+ *
+ * @return True or false.
+ */
+bool nn_act_func_tensor_batch(const NNActFuncTensor act_func, const NNTensor *input, NNTensor *output, NNError *error);
 
-#endif // NN_ACTIVATION_FUNCTION_H
+#endif // NN_ACTIVATION_H

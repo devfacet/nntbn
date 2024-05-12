@@ -2,10 +2,10 @@
 # Build:
 #   docker buildx build --platform linux/arm64 -f scripts/docker/Dockerfile.arm-cmsis-dsp -t nntbn:arm-cmsis-dsp . --load
 # Run:
-#   docker run --rm -it --platform linux/arm64 nntbn:arm-cmsis-dsp /nn/build/tests/arch/arm/cmsis-dsp/neuron
+#   docker run --rm -it --platform linux/arm64 nntbn:arm-cmsis-dsp /nn/build/tests/arch/arm/cmsis-dsp/dot_prod_perf
 
-# Build
-FROM ubuntu:latest as build
+# Base
+FROM ubuntu:latest as base
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
@@ -13,9 +13,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     lld \
     gcc-arm-none-eabi \
     libnewlib-arm-none-eabi
+
+# Build
+FROM base as build
 COPY . /nn
 WORKDIR /nn
-RUN make build-tests ARCH=arm TECH=cmsis-dsp LDFLAGS="-lm"
+RUN make build-artifacts PREFIX=tests/arch/arm FILTERS=cmsis-dsp LDFLAGS="-lm"
 
 # Runtime
 FROM ubuntu:latest

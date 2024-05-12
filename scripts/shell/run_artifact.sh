@@ -7,7 +7,7 @@ ARGS="${ARGS-}"
 ARTIFACT="${ARTIFACT-}"
 
 # If the ARTIFACT environment variable is not set then
-if [ -z "$ARTIFACT" ] || [ "$ARTIFACT" = "examples/" ] || [ "$ARTIFACT" = "tests/" ]; then
+if [ -z "$ARTIFACT" ] ; then
     echo "invalid ARTIFACT value"
     exit 1
 fi
