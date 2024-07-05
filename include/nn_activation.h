@@ -35,7 +35,7 @@ typedef enum {
 } NNActFuncType;
 
 /**
- * @brief Represents the activation function.
+ * @brief Represents an activation function.
  */
 typedef struct {
     NNActFuncType type;
