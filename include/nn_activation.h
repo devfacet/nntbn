@@ -50,6 +50,8 @@ typedef struct {
  *
  * @param type The type of activation function (scalar or tensor).
  * @param func The activation function.
+ *
+ * @return The activation function.
  */
 NNActFunc nn_act_func_init(NNActFuncType type, void *func);
 
