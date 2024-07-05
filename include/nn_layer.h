@@ -50,7 +50,6 @@ typedef struct {
     NNActFunc act_func;
     NNTensor *weights;
     NNTensor *biases;
-
 } NNLayer;
 
 /**

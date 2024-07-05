@@ -1,8 +1,9 @@
 src/nn_activation.c
 src/nn_app.c
 src/nn_config.c
-src/nn_mat_mul.c
-src/nn_mat_transpose.c
 src/nn_error.c
 src/nn_layer.c
+src/nn_mat_mul.c
+src/nn_mat_transpose.c
+src/nn_tensor.c
 src/nn_test.c

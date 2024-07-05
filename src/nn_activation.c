@@ -8,6 +8,33 @@
 
 // TODO: Add tests
 
+NNActFunc nn_act_func_init(NNActFuncType type, void *func) {
+    NN_DEBUG_PRINT(5, "function %s called with type=%d\n", __func__, type);
+
+    NNActFunc act_func;
+    act_func.type = type;
+    if (type == NN_ACT_FUNC_SCALAR) {
+        act_func.scalar_func = (NNActFuncScalar)func;
+    } else if (type == NN_ACT_FUNC_TENSOR) {
+        act_func.tensor_func = (NNActFuncTensor)func;
+    }
+    return act_func;
+}
+
+bool nn_act_func(NNActFunc act_func, const NNTensor *input, NNTensor *output, NNError *error) {
+    NN_DEBUG_PRINT(5, "function %s called with input.dims=%zu output.dims=%zu\n", __func__, input->dims, output->dims);
+
+    switch (act_func.type) {
+    case NN_ACT_FUNC_SCALAR:
+        return nn_act_func_scalar_batch(act_func.scalar_func, input, output, error);
+    case NN_ACT_FUNC_TENSOR:
+        return nn_act_func_tensor_batch(act_func.tensor_func, input, output, error);
+    default:
+        nn_error_set(error, NN_ERROR_INVALID_ARGUMENT, "invalid activation function type");
+        return false;
+    }
+}
+
 NNTensorUnit nn_act_func_identity(NNTensorUnit n) {
     NN_DEBUG_PRINT(5, "function %s called with n=%f\n", __func__, n);
 
@@ -68,13 +95,6 @@ bool nn_act_func_softmax(const NNTensor *input, NNTensor *output, NNError *error
     return true;
 }
 
-static void nn_tensor_create_slice(const NNTensor *tensor, const size_t offset, const size_t *sizes, NNTensor *slice) {
-    slice->flags = NN_TENSOR_FLAG_INIT;
-    slice->dims = 1;
-    slice->sizes = (size_t *)sizes;
-    slice->data = &tensor->data[offset];
-}
-
 bool nn_act_func_scalar_batch(const NNActFuncScalar act_func, const NNTensor *input, NNTensor *output, NNError *error) {
     NN_DEBUG_PRINT(5, "function %s called with input.dims=%zu output.dims=%zu\n", __func__, input->dims, output->dims);
 
@@ -92,7 +112,7 @@ bool nn_act_func_scalar_batch(const NNActFuncScalar act_func, const NNTensor *in
     size_t sizes[1] = {sample_size};
     NNTensor input_slice;
     for (size_t i = 0; i < batch_size; i++) {
-        nn_tensor_create_slice(input, i * sample_size, sizes, &input_slice);
+        nn_tensor_slice(input, i * sample_size, sizes, &input_slice);
         for (size_t j = 0; j < sample_size; ++j) {
             output->data[i * sample_size + j] = act_func(input_slice.data[j]);
         }
@@ -120,8 +140,8 @@ bool nn_act_func_tensor_batch(const NNActFuncTensor act_func, const NNTensor *in
     NNTensor output_slice;
 
     for (size_t i = 0; i < batch_size; i++) {
-        nn_tensor_create_slice(input, i * sample_size, sizes, &input_slice);
-        nn_tensor_create_slice(output, i * sample_size, sizes, &output_slice);
+        nn_tensor_slice(input, i * sample_size, sizes, &input_slice);
+        nn_tensor_slice(output, i * sample_size, sizes, &output_slice);
 
         if (!act_func(&input_slice, &output_slice, error)) {
             return false;

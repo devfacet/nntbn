@@ -11,6 +11,7 @@ bool nn_mat_mul(const NNTensor *a, const NNTensor *b, NNTensor *result, NNError 
         nn_error_set(error, NN_ERROR_INVALID_ARGUMENT, "tensor a or b is not initialized");
         return NULL;
     } else if (a->dims != 2 || b->dims != 2 || a->sizes[1] != b->sizes[0]) {
+        // Number of columns in the first tensor must be equal to the number of rows in the second tensor
         nn_error_setf(error, NN_ERROR_INVALID_ARGUMENT, "only 2-dimensional tensors with matching inner dimensions are allowed, a.dims=%zu b.dims=%zu a.sizes[1]=%zu b.sizes[0]=%zu", a->dims, b->dims, a->sizes[1], b->sizes[0]);
         return NULL;
     }

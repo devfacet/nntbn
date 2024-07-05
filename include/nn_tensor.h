@@ -239,4 +239,16 @@ NN_TENSOR_DEFINE_DESTROY(NNTensor);
 #endif
 #endif // NN_TENSOR_DEFINED
 
+/**
+ * @brief Slice the input tensor and store the slice in the output tensor.
+ *
+ * @param input The input tensor to slice.
+ * @param offset The offset of the slice.
+ * @param sizes The sizes of the slice.
+ * @param output The tensor to store the slice.
+ *
+ * @return void
+ */
+void nn_tensor_slice(const NNTensor *input, const size_t offset, const size_t *sizes, NNTensor *output);
+
 #endif // NN_TENSOR_H
