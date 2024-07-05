@@ -48,7 +48,6 @@ typedef struct {
 /**
  * @brief Initializes a new activation function.
  *
- * @param act_func The activation function.
  * @param type The type of activation function (scalar or tensor).
  * @param func The activation function.
  */
