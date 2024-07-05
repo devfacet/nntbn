@@ -87,10 +87,10 @@ def generate_test_cases(batch_sizes, input_sizes, output_sizes, hidden_layers):
                     layer_configs_c = []
                     for layer in layers:
                         if layer.act_func_name == "softmax":
-                            act_func_c = f".tensor_func = {act_func_map[layer.act_func_name]}"
+                            act_func_c = act_func_map[layer.act_func_name]
                             act_func_type = "NN_ACT_FUNC_TENSOR"
                         else:
-                            act_func_c = f".scalar_func = {act_func_map[layer.act_func_name]}"
+                            act_func_c = act_func_map[layer.act_func_name]
                             act_func_type = "NN_ACT_FUNC_SCALAR"
 
                         weights_c = ", ".join(map(str, layer.weights.flatten())) if layer.weights is not None else None
@@ -102,10 +102,9 @@ def generate_test_cases(batch_sizes, input_sizes, output_sizes, hidden_layers):
                             .layer_type = {layer.layer_type},
                             .inputs_size = {layer.inputs_size},
                             .output_size = {layer.output_size},
-                            .mat_mul_func = nn_mat_mul,
-                            .mat_transpose_func = nn_mat_transpose,
-                            .act_func_type = {act_func_type},
-                            .act_func = {{ {act_func_c} }},
+                            .mat_mul_func = {'NULL' if layer.layer_idx == 0 else 'nn_mat_mul'},
+                            .mat_transpose_func = {'NULL' if layer.layer_idx == 0 else 'nn_mat_transpose'},
+                            .act_func = nn_act_func_init({act_func_type}, {act_func_c}),
                             .weights = {"nn_tensor_init_NNTensor(2, (const size_t[]){" + str(layer.output_size) + ", " + str(layer.inputs_size) + "}, false, (const NNTensorUnit[]){ " + weights_c + "}, NULL)" if weights_c is not None else 'NULL'},
                             .biases = {"nn_tensor_init_NNTensor(1, (const size_t[]){" + str(layer.output_size) + "}, false, (const NNTensorUnit[]){ " + biases_c + "}, NULL)" if biases_c is not None else 'NULL'},
                             .inputs = {"nn_tensor_init_NNTensor(2, (const size_t[]){" + str(batch_size) + ", " + str(layer.inputs_size) + "}, false, (const NNTensorUnit[]){ " + inputs_c + "}, NULL)" if inputs_c is not None else 'NULL'},

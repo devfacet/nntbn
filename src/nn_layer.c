@@ -61,6 +61,7 @@ NNLayer *nn_layer_init(size_t input_size, size_t output_size, NNError *error) {
         return NULL;
     }
     layer->flags = NN_LAYER_FLAG_INIT;
+    nn_layer_check_forward_ready(layer); // update flags
 
     return layer;
 }
@@ -158,8 +159,9 @@ bool nn_layer_forward(const NNLayer *layer, const NNTensor *inputs, NNTensor *ou
         return false;
     }
 
-    // Check if matrix multiplication function is set
+    // Check if weights are set
     if (layer->flags & NN_LAYER_FLAG_WEIGHTS_SET) {
+        // Check if matrix multiplication function is set
         if (layer->flags & NN_LAYER_FLAG_MAT_MUL_FUNC_SET) {
             // Check if matrix transpose function is set
             if (layer->flags & NN_LAYER_FLAG_MAT_TRANSPOSE_FUNC_SET) {
@@ -168,6 +170,7 @@ bool nn_layer_forward(const NNLayer *layer, const NNTensor *inputs, NNTensor *ou
                 if (!weights) {
                     return false;
                 }
+                // TODO: Should we overwrite the weights tensor so that we don't have to allocate a new tensor every time?
                 if (!nn_mat_transpose(layer->weights, weights, error)) {
                     return false;
                 }

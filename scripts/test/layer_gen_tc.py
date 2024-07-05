@@ -36,11 +36,11 @@ def generate_test_case(batch_size, inputs_size, output_size, act_func_name):
 
     # Determine activation function
     if act_func_name == "softmax":
-        act_func_c = f".tensor_func = {act_func_map[act_func_name]}"
+        act_func_c = act_func_map[act_func_name]
         act_func_type = "NN_ACT_FUNC_TENSOR"
         act_func = nn_act_func_softmax
     else:
-        act_func_c = f".scalar_func = {act_func_map[act_func_name]}"
+        act_func_c = act_func_map[act_func_name]
         act_func_type = "NN_ACT_FUNC_SCALAR"
         act_func = globals()[f"nn_act_func_{act_func_name}"]
 
@@ -60,8 +60,7 @@ def generate_test_case(batch_size, inputs_size, output_size, act_func_name):
         .output_size = {output_size},
         .mat_mul_func = nn_mat_mul,
         .mat_transpose_func = nn_mat_transpose,
-        .act_func_type = {act_func_type},
-        .act_func = {{ {act_func_c} }},
+        .act_func = nn_act_func_init({act_func_type}, {act_func_c}),
         .weights = nn_tensor_init_NNTensor(2, (const size_t[]){{{output_size}, {inputs_size}}}, false, (const NNTensorUnit[]){{{weights_c}}}, NULL),
         .biases = nn_tensor_init_NNTensor(1, (const size_t[]){{{output_size}}}, false, (const NNTensorUnit[]){{{biases_c}}}, NULL),
         .inputs = nn_tensor_init_NNTensor(2, (const size_t[]){{{batch_size}, {inputs_size}}}, false, (const NNTensorUnit[]){{{inputs_c}}}, NULL),
