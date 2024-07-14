@@ -1,0 +1,7 @@
+tests/arch/generic/accuracy/nn_accuracy.c
+src/nn_accuracy.c
+src/nn_app.c
+src/nn_argmax.c
+src/nn_config.c
+src/nn_error.c
+src/nn_test.c
