@@ -115,7 +115,7 @@ int main(int argc, char *argv[]) {
     const int n_test_cases = 256;
     const float default_output_tolerance = 0.000001f;
 
-    // Use scripts/test/layer_multi_gen_tc.py to generate the test cases
+    // Use scripts/test/gen to generate test cases
     TestCase test_cases[] = {
         {
             .batch_size = 1,

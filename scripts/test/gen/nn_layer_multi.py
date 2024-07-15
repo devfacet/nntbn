@@ -1,4 +1,4 @@
-# This script generates test cases for NNLayer.
+# This script generates test cases for NNLayer struct.
 
 import numpy as np
 

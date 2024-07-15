@@ -1,0 +1,15 @@
+tests/arch/generic/activation/nn_act_func_init.c
+tests/arch/generic/activation/nn_act_func.c
+tests/arch/generic/activation/nn_act_func_identity.c
+tests/arch/generic/activation/nn_act_func_sigmoid.c
+tests/arch/generic/activation/nn_act_func_relu.c
+tests/arch/generic/activation/nn_act_func_softmax.c
+tests/arch/generic/activation/nn_act_func_scalar_batch.c
+tests/arch/generic/activation/nn_act_func_tensor_batch.c
+src/nn_activation.c
+src/nn_app.c
+src/nn_argmax.c
+src/nn_config.c
+src/nn_error.c
+src/nn_test.c
+src/nn_tensor.c

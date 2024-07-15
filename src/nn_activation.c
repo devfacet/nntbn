@@ -6,8 +6,6 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-// TODO: Add tests
-
 NNActFunc nn_act_func_init(NNActFuncType type, void *func) {
     NN_DEBUG_PRINT(5, "function %s called with type=%d\n", __func__, type);
 
@@ -138,11 +136,9 @@ bool nn_act_func_tensor_batch(const NNActFuncTensor act_func, const NNTensor *in
     size_t sizes[1] = {sample_size};
     NNTensor input_slice;
     NNTensor output_slice;
-
     for (size_t i = 0; i < batch_size; i++) {
         nn_tensor_slice(input, i * sample_size, sizes, &input_slice);
         nn_tensor_slice(output, i * sample_size, sizes, &output_slice);
-
         if (!act_func(&input_slice, &output_slice, error)) {
             return false;
         }
