@@ -1,5 +1,3 @@
-#define _POSIX_C_SOURCE 199309L
-
 #include "./argmax_perf.h"
 #include "nn_app.h"
 #include <stdlib.h>
