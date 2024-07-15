@@ -1,3 +1,5 @@
+#define _POSIX_C_SOURCE 199309L
+
 #include "arch/arm/neon/nn_dot_prod.h"
 #include "nn_app.h"
 #include "nn_config.h"
