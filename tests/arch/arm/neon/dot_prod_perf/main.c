@@ -1,5 +1,3 @@
-#define _POSIX_C_SOURCE 199309L
-
 #include "arch/arm/neon/nn_dot_prod.h"
 #include "nn_app.h"
 #include "nn_config.h"
@@ -21,13 +19,13 @@ int main(int argc, char *argv[]) {
     struct timespec start, end;
     long long total_time = 0;
     const int batch_size = 1024;
-    const int n_vectors = 4096;
+    const int vector_size = 4096;
     NNTensor *vec_a[batch_size];
     NNTensor *vec_b[batch_size];
     for (int i = 0; i < batch_size; i++) {
-        vec_a[i] = nn_tensor_init_NNTensor(1, (const size_t[]){4096}, false, NULL, NULL);
-        vec_b[i] = nn_tensor_init_NNTensor(1, (const size_t[]){4096}, false, NULL, NULL);
-        for (int j = 0; j < n_vectors; ++j) {
+        vec_a[i] = nn_tensor_init_NNTensor(1, (const size_t[]){vector_size}, false, NULL, NULL);
+        vec_b[i] = nn_tensor_init_NNTensor(1, (const size_t[]){vector_size}, false, NULL, NULL);
+        for (int j = 0; j < vector_size; ++j) {
             vec_a[i]->data[j] = (NNTensorUnit)rand() / (NNTensorUnit)RAND_MAX;
             vec_b[i]->data[j] = (NNTensorUnit)rand() / (NNTensorUnit)RAND_MAX;
         }

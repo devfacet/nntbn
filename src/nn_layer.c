@@ -172,12 +172,15 @@ bool nn_layer_forward(const NNLayer *layer, const NNTensor *inputs, NNTensor *ou
                 }
                 // TODO: Should we overwrite the weights tensor so that we don't have to allocate a new tensor every time?
                 if (!nn_mat_transpose(layer->weights, weights, error)) {
+                    nn_tensor_destroy_NNTensor(weights);
                     return false;
                 }
                 // Perform matrix multiplication
                 if (!layer->mat_mul_func(inputs, weights, outputs, error)) {
+                    nn_tensor_destroy_NNTensor(weights);
                     return false;
                 }
+                nn_tensor_destroy_NNTensor(weights);
             } else {
                 // Perform matrix multiplication
                 if (!layer->mat_mul_func(inputs, layer->weights, outputs, error)) {

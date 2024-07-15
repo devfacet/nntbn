@@ -1,6 +1,8 @@
 #ifndef NN_TEST_H
 #define NN_TEST_H
 
+#define _POSIX_C_SOURCE 199309L
+
 #include <time.h>
 
 /**

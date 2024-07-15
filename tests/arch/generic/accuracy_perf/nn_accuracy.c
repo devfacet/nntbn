@@ -1,5 +1,3 @@
-#define _POSIX_C_SOURCE 199309L
-
 #include "nn_accuracy.h"
 #include "nn_test.h"
 #include <stdio.h>
