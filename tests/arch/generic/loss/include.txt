@@ -1,0 +1,7 @@
+tests/arch/generic/loss/nn_loss_cross_entropy.c
+src/nn_app.c
+src/nn_config.c
+src/nn_error.c
+src/nn_loss.c
+src/nn_tensor.c
+src/nn_test.c
